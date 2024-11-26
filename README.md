@@ -1,6 +1,6 @@
-# Data Games Viz
+# OSS Data Tools Landscape
 
-Welcome to the Composable Data Platform project repository. This project was developed as part of an internship program with the primary objectives of:
+Welcome to the Composable Data Platform project repository. This project was developed with the primary objectives of:
 - Identifying open source solutions available in the market for building a composable data platform (note: this list may not be exhaustive due to the vast number of solutions).
 - Demonstrating the functionality of these solutions through a simple example implementation (https://github.com/olexya/data-games-viz)
 
