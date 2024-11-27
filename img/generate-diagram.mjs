@@ -30,12 +30,12 @@ const CONFIG = {
         sizes: {
             title: '24px',
             category: '20px',
-            subcategory: '15px',
-            tools: '13px'
+            subcategory: '14px',
+            tools: 12
         }
     },
     colors: {
-        background: '#e8fff0', // Vert pâle plus visible
+        background: '#f0fffa',
         border: '#000000',
         mainText: '#000000',
         titleText: '#000000',
@@ -63,24 +63,14 @@ function embedImage(imageData) {
 
 function createSVG() {
     const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-    const svg = d3.select(dom.window.document.body)
+    return d3.select(dom.window.document.body)
         .append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .attr('width', CONFIG.dimensions.width)
         .attr('height', CONFIG.dimensions.height)
-        .attr('viewBox', `0 0 ${CONFIG.dimensions.width} ${CONFIG.dimensions.height}`);
-    
-    // Ajouter un rectangle de fond explicite en premier
-    svg.append('rect')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', CONFIG.dimensions.width)
-        .attr('height', CONFIG.dimensions.height)
-        .attr('fill', CONFIG.colors.background);
-    
-    svg.style('font-family', CONFIG.fonts.family);
-    
-    return svg;
+        .attr('viewBox', `0 0 ${CONFIG.dimensions.width} ${CONFIG.dimensions.height}`)
+        .style('background-color', CONFIG.colors.background)
+        .style('font-family', CONFIG.fonts.family);
 }
 
 function wrapText(text, maxWidth, fontSize) {
@@ -343,7 +333,6 @@ async function convertSvgToPng(svgString, outputPath) {
     try {
         await sharp(Buffer.from(svgString))
             .png()
-            .withMetadata() // Préserve les métadonnées
             .toFile(outputPath);
         console.log('PNG file generated successfully!');
     } catch (error) {
