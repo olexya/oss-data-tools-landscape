@@ -2,8 +2,8 @@ name: Generate and Deploy Diagram
 
 on:
   schedule:
-    - cron: '0 0 1 * *'  # Exécution à minuit le 1er de chaque mois
-  workflow_dispatch:      # Garde la possibilité de lancer manuellement
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -25,6 +25,7 @@ jobs:
           "version": "1.0.0",
           "description": "Data Infrastructure Diagram Generator",
           "main": "img/generate-diagram.js",
+          "type": "module",
           "scripts": {
             "generate": "node img/generate-diagram.js"
           },

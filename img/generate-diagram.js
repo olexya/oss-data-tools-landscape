@@ -1,9 +1,13 @@
-const d3 = require('d3');
-const jsdom = require('jsdom');
-const fs = require('fs');
-const path = require('path');
-const sharp = require('sharp');
-const { JSDOM } = jsdom;
+import * as d3 from 'd3';
+import { JSDOM } from 'jsdom';
+import fs from 'fs';
+import path from 'path';
+import sharp from 'sharp';
+import { fileURLToPath } from 'url';
+
+// ES modules fix for __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Constants and Configuration
 const SCRIPT_DIR = __dirname;
@@ -356,11 +360,12 @@ async function main() {
     }
 }
 
-if (require.main === module) {
+// Only run if this file is being executed directly
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
     main().catch(error => {
         console.error('Fatal error:', error);
         process.exit(1);
     });
 }
 
-module.exports = { generateDiagram, parseMarkdownFiles };
+export { generateDiagram, parseMarkdownFiles };
