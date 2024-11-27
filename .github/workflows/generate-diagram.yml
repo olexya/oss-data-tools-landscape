@@ -72,9 +72,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: infrastructure-diagrams-${{ env.CURRENT_DATE }}
         path: |
           data_infrastructure.svg
           platform.png
+        compression-level: 9
+        retention-days: 90
