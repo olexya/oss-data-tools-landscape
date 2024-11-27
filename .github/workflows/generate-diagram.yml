@@ -66,8 +66,9 @@ jobs:
     - name: Commit and push if changed
       run: |
         git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
+        git pull origin main --rebase
         git add data_infrastructure.svg platform.png img/generate-diagram.mjs
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Update infrastructure diagrams for ${{ env.CURRENT_DATE }} [skip ci]" && git push)
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update infrastructure diagrams for ${{ env.CURRENT_DATE }} [skip ci]" && git push origin main --force)
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
