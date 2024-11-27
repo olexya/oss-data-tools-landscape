@@ -1,0 +1,47 @@
+name: Generate and Deploy Diagram
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Generate diagrams
+      run: npm run generate
+
+    - name: Configure Git
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Commit and push if changed
+      run: |
+        git add data_infrastructure.svg platform.png
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update infrastructure diagrams [skip ci]" && git push)
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: infrastructure-diagrams
+        path: |
+          data_infrastructure.svg
+          platform.png
