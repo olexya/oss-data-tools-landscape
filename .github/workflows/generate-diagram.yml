@@ -20,12 +20,13 @@ jobs:
 
     - name: Create package.json
       run: |
-        echo '{
+        cat > package.json << EOL
+        {
           "name": "data-infrastructure-diagram",
           "version": "1.0.0",
           "description": "Data Infrastructure Diagram Generator",
-          "main": "img/generate-diagram.js",
           "type": "module",
+          "main": "img/generate-diagram.js",
           "scripts": {
             "generate": "node img/generate-diagram.js"
           },
@@ -34,7 +35,14 @@ jobs:
             "jsdom": "^22.1.0",
             "sharp": "^0.32.6"
           }
-        }' > package.json
+        }
+        EOL
+
+    - name: List directory content
+      run: ls -la
+
+    - name: Display package.json content
+      run: cat package.json
 
     - name: Install dependencies
       run: npm install
