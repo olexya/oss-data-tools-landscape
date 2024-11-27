@@ -30,8 +30,8 @@ const CONFIG = {
         sizes: {
             title: '24px',
             category: '20px',
-            subcategory: '14px',
-            tools: 12
+            subcategory: '16px',
+            tools: '14px'
         }
     },
     colors: {
