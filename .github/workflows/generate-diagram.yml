@@ -68,7 +68,7 @@ jobs:
 
     - name: Commit and push if changed
       run: |
-        git add data_infrastructure.svg platform.png generate-diagram.mjs
+        git add data_infrastructure.svg platform.png img/generate-diagram.mjs
         git diff --quiet && git diff --staged --quiet || (git commit -m "Update infrastructure diagrams for ${{ env.CURRENT_DATE }} [skip ci]" && git push)
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
