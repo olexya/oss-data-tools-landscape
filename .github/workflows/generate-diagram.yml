@@ -1,11 +1,9 @@
 name: Generate and Deploy Diagram
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+  schedule:
+    - cron: '0 0 1 * *'  # Exécution à minuit le 1er de chaque mois
+  workflow_dispatch:      # Garde la possibilité de lancer manuellement
 
 jobs:
   build-and-deploy:
@@ -20,6 +18,23 @@ jobs:
       with:
         node-version: '18'
 
+    - name: Create package.json
+      run: |
+        echo '{
+          "name": "data-infrastructure-diagram",
+          "version": "1.0.0",
+          "description": "Data Infrastructure Diagram Generator",
+          "main": "img/generate-diagram.js",
+          "scripts": {
+            "generate": "node img/generate-diagram.js"
+          },
+          "dependencies": {
+            "d3": "^7.8.5",
+            "jsdom": "^22.1.0",
+            "sharp": "^0.32.6"
+          }
+        }' > package.json
+
     - name: Install dependencies
       run: npm install
 
@@ -31,17 +46,21 @@ jobs:
         git config user.name "GitHub Actions Bot"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
+    - name: Add date to commit message
+      run: |
+        echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
     - name: Commit and push if changed
       run: |
         git add data_infrastructure.svg platform.png
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Update infrastructure diagrams [skip ci]" && git push)
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update infrastructure diagrams for ${{ env.CURRENT_DATE }} [skip ci]" && git push)
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: infrastructure-diagrams
+        name: infrastructure-diagrams-${{ env.CURRENT_DATE }}
         path: |
           data_infrastructure.svg
           platform.png
