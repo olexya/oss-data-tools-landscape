@@ -8,10 +8,15 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.PAT_TOKEN }}
+        fetch-depth: 0
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
@@ -43,14 +48,6 @@ jobs:
         }
         EOL
 
-    - name: List directory content
-      run: |
-        ls -la
-        ls -la img/
-
-    - name: Display package.json content
-      run: cat package.json
-
     - name: Install dependencies
       run: npm install
 
@@ -59,7 +56,7 @@ jobs:
 
     - name: Configure Git
       run: |
-        git config user.name "GitHub Actions Bot"
+        git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
     - name: Add date to commit message
@@ -68,6 +65,7 @@ jobs:
 
     - name: Commit and push if changed
       run: |
+        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
         git add data_infrastructure.svg platform.png img/generate-diagram.mjs
         git diff --quiet && git diff --staged --quiet || (git commit -m "Update infrastructure diagrams for ${{ env.CURRENT_DATE }} [skip ci]" && git push)
       env:
