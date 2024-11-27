@@ -18,6 +18,11 @@ jobs:
       with:
         node-version: '18'
 
+    - name: Rename JS file to MJS
+      run: |
+        cd img
+        mv generate-diagram.js generate-diagram.mjs
+
     - name: Create package.json
       run: |
         cat > package.json << EOL
@@ -26,9 +31,9 @@ jobs:
           "version": "1.0.0",
           "description": "Data Infrastructure Diagram Generator",
           "type": "module",
-          "main": "img/generate-diagram.js",
+          "main": "img/generate-diagram.mjs",
           "scripts": {
-            "generate": "node img/generate-diagram.js"
+            "generate": "node img/generate-diagram.mjs"
           },
           "dependencies": {
             "d3": "^7.8.5",
@@ -39,7 +44,9 @@ jobs:
         EOL
 
     - name: List directory content
-      run: ls -la
+      run: |
+        ls -la
+        ls -la img/
 
     - name: Display package.json content
       run: cat package.json
@@ -61,7 +68,7 @@ jobs:
 
     - name: Commit and push if changed
       run: |
-        git add data_infrastructure.svg platform.png
+        git add data_infrastructure.svg platform.png generate-diagram.mjs
         git diff --quiet && git diff --staged --quiet || (git commit -m "Update infrastructure diagrams for ${{ env.CURRENT_DATE }} [skip ci]" && git push)
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
