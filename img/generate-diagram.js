@@ -55,9 +55,7 @@ const MAIN_CATEGORIES = [
 
 // Utility Functions
 const cleanToolName = tool => tool.replace(/Apache\s+/g, '').trim();
-const formatToolsList = tools => tools.map(tool => 
-    `${cleanToolName(tool.name)}${tool.stars ? ` (${tool.stars}⭐)` : ''}`
-).join(', ');
+const formatToolsList = tools => tools.map(cleanToolName).join(', ');
 
 function embedImage(imageData) {
     return `data:image/png;base64,${Buffer.from(imageData).toString('base64')}`;
@@ -248,17 +246,8 @@ function parseMarkdownFiles() {
                 const tools = lines
                     .filter(line => line.includes('|'))
                     .filter(line => !line.includes('Tool |') && !line.includes('---|'))
-                    .map(line => {
-                        const [_, name, stars] = line.split('|').map(s => s.trim());
-                        // Parse stars count and remove any non-digit characters
-                        const starsCount = parseInt(stars?.replace(/[^\d]/g, '') || '0');
-                        return {
-                            name: name,
-                            stars: starsCount
-                        };
-                    })
-                    .filter(tool => tool.name)
-                    .sort((a, b) => b.stars - a.stars); // Sort by stars in descending order
+                    .map(line => line.split('|')[1]?.trim())
+                    .filter(Boolean);
 
                 if (tools.length > 0) {
                     data[categoryMapping[category]][title] = tools;
@@ -354,7 +343,7 @@ async function convertSvgToPng(svgString, outputPath) {
     try {
         await sharp(Buffer.from(svgString))
             .png()
-            .withMetadata()
+            .withMetadata() // Préserve les métadonnées
             .toFile(outputPath);
         console.log('PNG file generated successfully!');
     } catch (error) {
