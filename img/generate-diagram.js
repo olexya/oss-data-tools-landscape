@@ -35,7 +35,7 @@ const CONFIG = {
         }
     },
     colors: {
-        background: '#f0fffa',
+        background: '#e8fff0', // Vert pâle plus visible
         border: '#000000',
         mainText: '#000000',
         titleText: '#000000',
@@ -55,7 +55,9 @@ const MAIN_CATEGORIES = [
 
 // Utility Functions
 const cleanToolName = tool => tool.replace(/Apache\s+/g, '').trim();
-const formatToolsList = tools => tools.map(cleanToolName).join(', ');
+const formatToolsList = tools => tools.map(tool => 
+    `${cleanToolName(tool.name)}${tool.stars ? ` (${tool.stars}⭐)` : ''}`
+).join(', ');
 
 function embedImage(imageData) {
     return `data:image/png;base64,${Buffer.from(imageData).toString('base64')}`;
@@ -63,14 +65,24 @@ function embedImage(imageData) {
 
 function createSVG() {
     const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-    return d3.select(dom.window.document.body)
+    const svg = d3.select(dom.window.document.body)
         .append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .attr('width', CONFIG.dimensions.width)
         .attr('height', CONFIG.dimensions.height)
-        .attr('viewBox', `0 0 ${CONFIG.dimensions.width} ${CONFIG.dimensions.height}`)
-        .style('background-color', CONFIG.colors.background)
-        .style('font-family', CONFIG.fonts.family);
+        .attr('viewBox', `0 0 ${CONFIG.dimensions.width} ${CONFIG.dimensions.height}`);
+    
+    // Ajouter un rectangle de fond explicite en premier
+    svg.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', CONFIG.dimensions.width)
+        .attr('height', CONFIG.dimensions.height)
+        .attr('fill', CONFIG.colors.background);
+    
+    svg.style('font-family', CONFIG.fonts.family);
+    
+    return svg;
 }
 
 function wrapText(text, maxWidth, fontSize) {
@@ -236,8 +248,17 @@ function parseMarkdownFiles() {
                 const tools = lines
                     .filter(line => line.includes('|'))
                     .filter(line => !line.includes('Tool |') && !line.includes('---|'))
-                    .map(line => line.split('|')[1]?.trim())
-                    .filter(Boolean);
+                    .map(line => {
+                        const [_, name, stars] = line.split('|').map(s => s.trim());
+                        // Parse stars count and remove any non-digit characters
+                        const starsCount = parseInt(stars?.replace(/[^\d]/g, '') || '0');
+                        return {
+                            name: name,
+                            stars: starsCount
+                        };
+                    })
+                    .filter(tool => tool.name)
+                    .sort((a, b) => b.stars - a.stars); // Sort by stars in descending order
 
                 if (tools.length > 0) {
                     data[categoryMapping[category]][title] = tools;
@@ -333,6 +354,7 @@ async function convertSvgToPng(svgString, outputPath) {
     try {
         await sharp(Buffer.from(svgString))
             .png()
+            .withMetadata()
             .toFile(outputPath);
         console.log('PNG file generated successfully!');
     } catch (error) {
