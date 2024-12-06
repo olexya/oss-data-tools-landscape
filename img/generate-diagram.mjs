@@ -35,13 +35,13 @@ const CONFIG = {
         }
     },
     colors: {
-        background: '#f0fffa',
+        background: '#e6fff0', // Plus foncé pour être sûr qu'il soit visible
         border: '#000000',
         mainText: '#000000',
         titleText: '#000000',
         categoryText: '#56D696',
         subcategoryText: '#000000',
-        boxBackground: '#FFFFFF',
+        boxBackground: '#ffffff',
         subBoxBackground: '#F5F5F5'
     }
 };
@@ -63,14 +63,21 @@ function embedImage(imageData) {
 
 function createSVG() {
     const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-    return d3.select(dom.window.document.body)
+    const svg = d3.select(dom.window.document.body)
         .append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .attr('width', CONFIG.dimensions.width)
         .attr('height', CONFIG.dimensions.height)
         .attr('viewBox', `0 0 ${CONFIG.dimensions.width} ${CONFIG.dimensions.height}`)
-        .style('background-color', CONFIG.colors.background)
         .style('font-family', CONFIG.fonts.family);
+    
+    // Ajout d'un rectangle de fond pour forcer la couleur
+    svg.append('rect')
+        .attr('width', '100%')
+        .attr('height', '100%')
+        .attr('fill', CONFIG.colors.background);
+        
+    return svg;
 }
 
 function wrapText(text, maxWidth, fontSize) {
