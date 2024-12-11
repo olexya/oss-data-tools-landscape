@@ -15,34 +15,44 @@ const OUTPUT_DIR = path.join(SCRIPT_DIR, '..');
 
 const CONFIG = {
     dimensions: {
-        width: 1200,
-        height: 800,
-        margin: { top: 50, right: 50, bottom: 50, left: 50 },
-        platformHeight: 140,
-        lineHeight: 16,
-        subcategoryPadding: 10,
-        toolsPadding: 10,
-        logoWidth: 150,
-        logoHeight: 50
+        width: 1600,
+        height: 1000,
+        margin: { top: 70, right: 60, bottom: 60, left: 60 },
+        platformHeight: 180,
+        lineHeight: 20,
+        subcategoryPadding: 15,
+        toolsPadding: 15,
+        logoWidth: 180,
+        logoHeight: 60
     },
     fonts: {
-        family: 'Helvetica',
+        family: 'Arial, Helvetica, sans-serif',
         sizes: {
-            title: '24px',
-            category: '20px',
-            subcategory: '14px',
-            tools: 12
+            title: '32px',
+            category: '24px',
+            subcategory: '18px',
+            tools: 16
+        },
+        weights: {
+            title: 700,
+            category: 600,
+            subcategory: 600,
+            tools: 400
         }
     },
     colors: {
-        background: '#e6fff0', // Plus foncé pour être sûr qu'il soit visible
-        border: '#000000',
-        mainText: '#000000',
-        titleText: '#000000',
-        categoryText: '#56D696',
-        subcategoryText: '#000000',
-        boxBackground: '#ffffff',
-        subBoxBackground: '#F5F5F5'
+        background: '#FFFFFF',
+        border: '#2C3E50',
+        mainText: '#2C3E50',
+        titleText: '#1A237E',
+        categoryText: '#1976D2',
+        subcategoryText: '#2C3E50',
+        boxBackground: '#FFFFFF',
+        subBoxBackground: '#F5F8FA'
+    },
+    export: {
+        density: 300,
+        quality: 100
     }
 };
 
@@ -71,7 +81,6 @@ function createSVG() {
         .attr('viewBox', `0 0 ${CONFIG.dimensions.width} ${CONFIG.dimensions.height}`)
         .style('font-family', CONFIG.fonts.family);
     
-    // Ajout d'un rectangle de fond pour forcer la couleur
     svg.append('rect')
         .attr('width', '100%')
         .attr('height', '100%')
@@ -119,7 +128,7 @@ function wrapText(text, maxWidth, fontSize) {
 function addWrappedText(svg, text, x, y, maxWidth, fontSize, maxHeight, boxHeight) {
     const lines = wrapText(text, maxWidth, fontSize);
     const totalHeight = lines.length * CONFIG.dimensions.lineHeight;
-    const totalContentHeight = totalHeight + 25;
+    const totalContentHeight = totalHeight + 30;
     const startY = y + (boxHeight - totalContentHeight) / 2 + 5;
 
     let actualHeight = 0;
@@ -127,20 +136,22 @@ function addWrappedText(svg, text, x, y, maxWidth, fontSize, maxHeight, boxHeigh
         if (i * CONFIG.dimensions.lineHeight < maxHeight) {
             svg.append('text')
                 .attr('x', x)
-                .attr('y', startY + 25 + (i * CONFIG.dimensions.lineHeight))
+                .attr('y', startY + 30 + (i * CONFIG.dimensions.lineHeight))
                 .attr('text-anchor', 'middle')
                 .attr('font-size', `${fontSize}px`)
+                .attr('font-weight', CONFIG.fonts.weights.tools)
                 .attr('font-family', CONFIG.fonts.family)
-                .text(line);
+                .text(line)
+                .style('letter-spacing', '0.3px');
             actualHeight = (i + 1) * CONFIG.dimensions.lineHeight;
         }
     });
 
     return {
-        totalHeight: actualHeight + 25,
+        totalHeight: actualHeight + 30,
         startY: startY,
-        endY: startY + actualHeight + 25,
-        titleY: startY + 15
+        endY: startY + actualHeight + 30,
+        titleY: startY + 20
     };
 }
 
@@ -151,10 +162,12 @@ function drawBox(svg, x, y, width, height, fill = CONFIG.colors.subBoxBackground
         .attr('width', width)
         .attr('height', height)
         .attr('fill', fill)
-        .attr('stroke', stroke);
+        .attr('stroke', stroke)
+        .attr('rx', 4) // Added rounded corners
+        .attr('ry', 4);
 }
 
-function drawTitle(svg, text, x, y, { fontSize = CONFIG.fonts.sizes.category, color = CONFIG.colors.categoryText, weight = 'bold', anchor = 'middle' } = {}) {
+function drawTitle(svg, text, x, y, { fontSize = CONFIG.fonts.sizes.category, color = CONFIG.colors.categoryText, weight = CONFIG.fonts.weights.category, anchor = 'middle' } = {}) {
     return svg.append('text')
         .attr('x', x)
         .attr('y', y)
@@ -163,6 +176,7 @@ function drawTitle(svg, text, x, y, { fontSize = CONFIG.fonts.sizes.category, co
         .attr('font-weight', weight)
         .attr('font-family', CONFIG.fonts.family)
         .attr('fill', color)
+        .style('letter-spacing', '0.5px')
         .text(text);
 }
 
@@ -204,7 +218,8 @@ function drawSubcategory(svg, subcat, tools, position) {
 
     drawTitle(svg, subcat, x + width / 2, toolsInfo.titleY - 5, {
         fontSize: CONFIG.fonts.sizes.subcategory,
-        color: CONFIG.colors.subcategoryText
+        color: CONFIG.colors.subcategoryText,
+        weight: CONFIG.fonts.weights.subcategory
     });
 
     return toolsInfo;
@@ -273,6 +288,7 @@ function generateDiagram(data) {
     drawTitle(svg, 'OSS Data Tools Landscape', margin.left + 10, margin.top - 20, {
         fontSize: CONFIG.fonts.sizes.title,
         color: CONFIG.colors.titleText,
+        weight: CONFIG.fonts.weights.title,
         anchor: 'left'
     });
 
@@ -285,13 +301,12 @@ function generateDiagram(data) {
         const x = margin.left + (i * columnWidth);
         const y = margin.top + 40;
         
-        // Category container
         drawBox(svg, x + 10, y, columnWidth - 20, columnHeight - 50, CONFIG.colors.boxBackground);
         
-        // Category title
-        drawTitle(svg, category, x + (columnWidth / 2), y - 10);
+        drawTitle(svg, category, x + (columnWidth / 2), y - 10, {
+            weight: CONFIG.fonts.weights.category
+        });
 
-        // Draw subcategories
         const subcategories = data[category];
         if (subcategories) {
             const numSubcats = Object.keys(subcategories).length;
@@ -315,7 +330,9 @@ function generateDiagram(data) {
     const platformWidth = width - margin.left - margin.right - 20;
     
     drawBox(svg, margin.left + 10, platformY, platformWidth, platformHeight, CONFIG.colors.boxBackground);
-    drawTitle(svg, 'Platform Management', width / 2, platformY - 12);
+    drawTitle(svg, 'Platform Management', width / 2, platformY - 12, {
+        weight: CONFIG.fonts.weights.category
+    });
 
     const platformData = data['Platform Management'];
     if (platformData) {
@@ -339,9 +356,12 @@ function generateDiagram(data) {
 async function convertSvgToPng(svgString, outputPath) {
     try {
         await sharp(Buffer.from(svgString))
-            .png()
+            .png({
+                quality: CONFIG.export.quality,
+                density: CONFIG.export.density
+            })
             .toFile(outputPath);
-        console.log('PNG file generated successfully!');
+        console.log('High-quality PNG file generated successfully!');
     } catch (error) {
         console.error('Error converting SVG to PNG:', error);
         throw error;
