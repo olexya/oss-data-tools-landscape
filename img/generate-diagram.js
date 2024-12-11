@@ -15,8 +15,8 @@ const OUTPUT_DIR = path.join(SCRIPT_DIR, '..');
 
 const CONFIG = {
     dimensions: {
-        width: 1600,
-        height: 1000,
+        width: 1200,
+        height: 800,
         margin: { top: 50, right: 50, bottom: 50, left: 50 },
         platformHeight: 140,
         lineHeight: 16,
@@ -35,7 +35,7 @@ const CONFIG = {
         }
     },
     colors: {
-        background: '#e6fff0',
+        background: '#e6fff0', // Plus foncé pour être sûr qu'il soit visible
         border: '#000000',
         mainText: '#000000',
         titleText: '#000000',
@@ -339,11 +339,9 @@ function generateDiagram(data) {
 async function convertSvgToPng(svgString, outputPath) {
     try {
         await sharp(Buffer.from(svgString))
-            .png({
-                density: 300
-            })
+            .png()
             .toFile(outputPath);
-        console.log('High-quality PNG file generated successfully!');
+        console.log('PNG file generated successfully!');
     } catch (error) {
         console.error('Error converting SVG to PNG:', error);
         throw error;
