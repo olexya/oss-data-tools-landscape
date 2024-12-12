@@ -349,7 +349,7 @@ async function convertSvgToPng(svgString, outputPath) {
         .resize({
             width: 2400, // Double de la taille SVG (1600 * 2)
             height: 1600, // Double de la taille SVG (1000 * 2)
-            fit: 'contain',
+            fit: 'fill',
             position: 'center'
         })
         .png({
