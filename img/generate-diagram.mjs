@@ -347,8 +347,8 @@ async function convertSvgToPng(svgString, outputPath) {
             limitInputPixels: false // Permet de gérer de grandes images
         })
         .resize({
-            width: 3200, // Double de la taille SVG (1600 * 2)
-            height: 2000, // Double de la taille SVG (1000 * 2)
+            width: 2400, // Double de la taille SVG (1600 * 2)
+            height: 1600, // Double de la taille SVG (1000 * 2)
             fit: 'contain',
             position: 'center'
         })
@@ -363,7 +363,7 @@ async function convertSvgToPng(svgString, outputPath) {
         })
         .withMetadata() // Préserve les métadonnées
         .toFile(outputPath);
-        
+
         console.log('PNG file generated successfully!');
     } catch (error) {
         console.error('Error converting SVG to PNG:', error);
