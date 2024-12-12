@@ -338,9 +338,29 @@ function generateDiagram(data) {
 
 async function convertSvgToPng(svgString, outputPath) {
     try {
-        await sharp(Buffer.from(svgString))
-            .png()
-            .toFile(outputPath);
+        await sharp(svg, {
+            // Optimisations spécifiques pour le SVG
+            density: 300, // DPI élevé
+            background: { r: 255, g: 255, b: 255, alpha: 1 }, // Fond blanc explicite
+            limitInputPixels: false // Permet de gérer de grandes images
+        })
+        .resize({
+            width: 2400,
+            height: 1600,
+            fit: 'contain',
+            position: 'center'
+        })
+        .png({
+            compressionLevel: 9, // Compression maximale
+            palette: false, // Pas de palette pour garder la qualité maximale
+            quality: 100,
+            effort: 10, // Effort maximal de compression
+            progressive: true,
+            adaptiveFiltering: true, // Filtre adaptatif pour une meilleure compression
+            colours: 256 // Nombre de couleurs optimal pour le web
+        })
+        .withMetadata() // Préserve les métadonnées
+        .toFile(outputPath);
         console.log('PNG file generated successfully!');
     } catch (error) {
         console.error('Error converting SVG to PNG:', error);
