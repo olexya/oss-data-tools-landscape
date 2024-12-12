@@ -338,6 +338,8 @@ function generateDiagram(data) {
 
 async function convertSvgToPng(svgString, outputPath) {
     try {
+        const svg = Buffer.from(svgString);
+        
         await sharp(svg, {
             // Optimisations spécifiques pour le SVG
             density: 300, // DPI élevé
@@ -345,8 +347,8 @@ async function convertSvgToPng(svgString, outputPath) {
             limitInputPixels: false // Permet de gérer de grandes images
         })
         .resize({
-            width: 2400,
-            height: 1600,
+            width: 3200, // Double de la taille SVG (1600 * 2)
+            height: 2000, // Double de la taille SVG (1000 * 2)
             fit: 'contain',
             position: 'center'
         })
@@ -361,6 +363,7 @@ async function convertSvgToPng(svgString, outputPath) {
         })
         .withMetadata() // Préserve les métadonnées
         .toFile(outputPath);
+        
         console.log('PNG file generated successfully!');
     } catch (error) {
         console.error('Error converting SVG to PNG:', error);
