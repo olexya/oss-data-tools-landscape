@@ -342,7 +342,7 @@ async function convertSvgToPng(svgString, outputPath) {
         
         await sharp(svg, {
             // Optimisations spécifiques pour le SVG
-            density: 300, // DPI élevé
+            density: 400, // DPI élevé
             background: { r: 255, g: 255, b: 255, alpha: 1 }, // Fond blanc explicite
             limitInputPixels: false // Permet de gérer de grandes images
         })
