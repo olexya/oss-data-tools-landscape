@@ -1,0 +1,67 @@
+name: Generate Commercial Diagram
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'  # Premier jour de chaque mois à minuit
+  workflow_dispatch:  # Déclenchement manuel
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.PAT_TOKEN }}
+        ref: main
+        fetch-depth: 0
+
+    - name: Git Pull Latest
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git fetch origin main
+        git reset --hard origin/main
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: |
+        cd commercial/img
+        npm install
+
+    - name: Generate commercial diagrams
+      run: |
+        cd commercial/img
+        npm run generate
+
+    - name: Add date to commit message
+      run: |
+        echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+    - name: Commit and Push Changes
+      run: |
+        git add commercial/commercial_infrastructure.svg commercial/commercial_platform.png
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update commercial infrastructure diagrams for ${{ env.CURRENT_DATE }} [skip ci]"
+          git push https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+        fi
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: commercial-diagrams-${{ env.CURRENT_DATE }}
+        path: |
+          commercial/commercial_infrastructure.svg
+          commercial/commercial_platform.png
+        compression-level: 9
+        retention-days: 90
+
