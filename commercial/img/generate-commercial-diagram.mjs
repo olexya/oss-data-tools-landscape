@@ -214,7 +214,7 @@ function drawSubcategory(svg, subcat, tools, position) {
     return toolsInfo;
 }
 
-// Commercial-specific data - hardcoded for reliability
+// Commercial-specific data - synchronized with Markdown files
 function getCommercialData() {
     return {
         'Ingestion and Transport': {
@@ -236,21 +236,22 @@ function getCommercialData() {
             ]
         },
         'Storage': {
-            'Cloud Data Warehouses': [
-                'Snowflake', 'BigQuery', 'Redshift', 'Azure Synapse', 
-                'Databricks SQL', 'Firebolt', 'Teradata Vantage'
-            ],
-            'Data Lakehouse': [
-                'Databricks Lakehouse', 'Dremio Cloud', 'Starburst Galaxy', 
-                'Onehouse', 'Tabular'
+            'File Layer': [
+                'Amazon S3', 'Azure Blob Storage', 'Google Cloud Storage', 
+                'Wasabi', 'Backblaze B2', 'Cloudflare R2'
             ],
             'Object Storage': [
-                'Amazon S3', 'Azure Blob', 'Google Cloud Storage', 
-                'Wasabi', 'Cloudflare R2'
+                'NetApp StorageGRID', 'Dell ECS', 'Pure Storage FlashBlade', 
+                'Hitachi Content Platform', 'IBM Cloud Object Storage'
             ],
-            'Real-time OLAP': [
-                'ClickHouse Cloud', 'Rockset', 'SingleStore', 
-                'Imply (Druid)', 'Tinybird', 'Propel'
+            'Metadata Layer': [
+                'Snowflake', 'BigQuery', 'Redshift', 'Azure Synapse', 
+                'Databricks Lakehouse', 'Teradata Vantage', 'Firebolt', 
+                'Dremio Cloud', 'Starburst Galaxy', 'Tabular', 'Motherduck'
+            ],
+            'Data Modeling': [
+                'dbt Cloud', 'Coalesce', 'Dataform', 'Prophecy', 
+                'Alteryx', 'Datameer', 'erwin Data Modeler'
             ]
         },
         'Query and Processing': {
