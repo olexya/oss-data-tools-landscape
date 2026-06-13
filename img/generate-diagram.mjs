@@ -15,15 +15,21 @@ const OUTPUT_DIR = path.join(SCRIPT_DIR, '..');
 
 const CONFIG = {
     dimensions: {
-        width: 1200,
+        width: 1600,
         height: 800,
-        margin: { top: 50, right: 50, bottom: 50, left: 50 },
+        margin: { top: 70, right: 50, bottom: 40, left: 50 },
         platformHeight: 140,
         lineHeight: 16,
         subcategoryPadding: 10,
         toolsPadding: 10,
         logoWidth: 150,
-        logoHeight: 50
+        logoHeight: 50,
+        // Mise en page dynamique
+        catTitleSpace: 34,   // espace réservé au titre de catégorie
+        subTitleH: 20,       // hauteur du titre de sous-catégorie
+        subPad: 12,          // marge interne basse d'une sous-catégorie
+        subGap: 12,          // espace vertical entre sous-catégories
+        colGap: 24           // espace avant la bande Platform Management
     },
     fonts: {
         family: 'Helvetica',
@@ -61,14 +67,14 @@ function embedImage(imageData) {
     return `data:image/png;base64,${Buffer.from(imageData).toString('base64')}`;
 }
 
-function createSVG() {
+function createSVG(width = CONFIG.dimensions.width, height = CONFIG.dimensions.height) {
     const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
     const svg = d3.select(dom.window.document.body)
         .append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
-        .attr('width', CONFIG.dimensions.width)
-        .attr('height', CONFIG.dimensions.height)
-        .attr('viewBox', `0 0 ${CONFIG.dimensions.width} ${CONFIG.dimensions.height}`)
+        .attr('width', width)
+        .attr('height', height)
+        .attr('viewBox', `0 0 ${width} ${height}`)
         .style('font-family', CONFIG.fonts.family);
     
     // Ajout d'un rectangle de fond pour forcer la couleur
@@ -116,32 +122,15 @@ function wrapText(text, maxWidth, fontSize) {
     );
 }
 
-function addWrappedText(svg, text, x, y, maxWidth, fontSize, maxHeight, boxHeight) {
-    const lines = wrapText(text, maxWidth, fontSize);
-    const totalHeight = lines.length * CONFIG.dimensions.lineHeight;
-    const totalContentHeight = totalHeight + 25;
-    const startY = y + (boxHeight - totalContentHeight) / 2 + 5;
+// Mesure le nombre de lignes d'outils pour une largeur donnée (sert au calcul de hauteur).
+function measureTools(tools, maxWidth) {
+    return wrapText(formatToolsList(tools), maxWidth, CONFIG.fonts.sizes.tools);
+}
 
-    let actualHeight = 0;
-    lines.forEach((line, i) => {
-        if (i * CONFIG.dimensions.lineHeight < maxHeight) {
-            svg.append('text')
-                .attr('x', x)
-                .attr('y', startY + 25 + (i * CONFIG.dimensions.lineHeight))
-                .attr('text-anchor', 'middle')
-                .attr('font-size', `${fontSize}px`)
-                .attr('font-family', CONFIG.fonts.family)
-                .text(line);
-            actualHeight = (i + 1) * CONFIG.dimensions.lineHeight;
-        }
-    });
-
-    return {
-        totalHeight: actualHeight + 25,
-        startY: startY,
-        endY: startY + actualHeight + 25,
-        titleY: startY + 15
-    };
+// Hauteur de boîte nécessaire pour une sous-catégorie (titre + lignes + marge).
+function subcatBoxHeight(lines) {
+    const { subTitleH, lineHeight, subPad } = CONFIG.dimensions;
+    return subTitleH + Math.max(1, lines.length) * lineHeight + subPad;
 }
 
 function drawBox(svg, x, y, width, height, fill = CONFIG.colors.subBoxBackground, stroke = '#E0E0E0') {
@@ -185,29 +174,28 @@ function addLogo(svg, logoPath) {
     }
 }
 
-function drawSubcategory(svg, subcat, tools, position) {
-    const { x, y, width, height, maxWidth, maxHeight } = position;
-    
-    drawBox(svg, x, y, width, height);
-    
-    const formattedTools = formatToolsList(tools);
-    const toolsInfo = addWrappedText(
-        svg,
-        formattedTools,
-        x + width / 2,
-        y,
-        maxWidth,
-        CONFIG.fonts.sizes.tools,
-        maxHeight,
-        height
-    );
+// Dessine une sous-catégorie : boîte dimensionnée au contenu, titre en haut,
+// outils alignés sous le titre (jamais centrés → pas de débordement).
+function drawSubcategory(svg, subcat, lines, position) {
+    const { x, y, width, height } = position;
+    const { subTitleH, lineHeight } = CONFIG.dimensions;
 
-    drawTitle(svg, subcat, x + width / 2, toolsInfo.titleY - 5, {
+    drawBox(svg, x, y, width, height);
+
+    drawTitle(svg, subcat, x + width / 2, y + 15, {
         fontSize: CONFIG.fonts.sizes.subcategory,
         color: CONFIG.colors.subcategoryText
     });
 
-    return toolsInfo;
+    lines.forEach((line, i) => {
+        svg.append('text')
+            .attr('x', x + width / 2)
+            .attr('y', y + subTitleH + 14 + (i * lineHeight))
+            .attr('text-anchor', 'middle')
+            .attr('font-size', `${CONFIG.fonts.sizes.tools}px`)
+            .attr('font-family', CONFIG.fonts.family)
+            .text(line);
+    });
 }
 
 function parseMarkdownFiles() {
@@ -259,96 +247,97 @@ function parseMarkdownFiles() {
 }
 
 function generateDiagram(data) {
-    const svg = createSVG();
-    const { margin, width, height, platformHeight } = CONFIG.dimensions;
-    
-    // Main border
-    drawBox(svg, margin.left, margin.top, width - margin.left - margin.right, 
-        height - margin.top - margin.bottom, 'none', CONFIG.colors.border);
+    const d = CONFIG.dimensions;
+    const { margin } = d;
+    const width = d.width;
+    const usableWidth = width - margin.left - margin.right;
+    const columnWidth = usableWidth / MAIN_CATEGORIES.length;
+    const subWidthInner = columnWidth - 40;     // largeur d'une boîte de sous-catégorie
+    const subTextWidth = subWidthInner - 16;    // largeur utile pour le texte (marge)
 
-    // Add logo
-    addLogo(svg, 'logo.png');
-
-    // Main title
-    drawTitle(svg, 'OSS Data Tools Landscape', margin.left + 10, margin.top - 20, {
-        fontSize: CONFIG.fonts.sizes.title,
-        color: CONFIG.colors.titleText,
-        anchor: 'left'
-    });
-
-    // Calculate layout dimensions
-    const columnWidth = (width - margin.left - margin.right) / MAIN_CATEGORIES.length;
-    const columnHeight = height - margin.top - margin.bottom - platformHeight - 40;
-
-    // Draw main categories
-    MAIN_CATEGORIES.forEach((category, i) => {
-        const x = margin.left + (i * columnWidth);
-        const y = margin.top + 40;
-        
-        // Category container
-        drawBox(svg, x + 10, y, columnWidth - 20, columnHeight - 50, CONFIG.colors.boxBackground);
-        
-        // Category title
-        drawTitle(svg, category, x + (columnWidth / 2), y - 10);
-
-        // Draw subcategories
-        const subcategories = data[category];
-        if (subcategories) {
-            const numSubcats = Object.keys(subcategories).length;
-            const subHeight = (columnHeight - 70) / numSubcats;
-            
-            Object.entries(subcategories).forEach(([subcat, tools], j) => {
-                drawSubcategory(svg, subcat, tools, {
-                    x: x + 20,
-                    y: y + (j * subHeight) + 15,
-                    width: columnWidth - 40,
-                    height: subHeight - 10,
-                    maxWidth: columnWidth - CONFIG.dimensions.toolsPadding,
-                    maxHeight: subHeight - 2 * CONFIG.dimensions.subcategoryPadding - 10
-                });
-            });
-        }
-    });
-
-    // Platform Management section
-    const platformY = height - margin.bottom - platformHeight - 10;
-    const platformWidth = width - margin.left - margin.right - 20;
-    
-    drawBox(svg, margin.left + 10, platformY, platformWidth, platformHeight, CONFIG.colors.boxBackground);
-    drawTitle(svg, 'Platform Management', width / 2, platformY - 12);
-
-    const platformData = data['Platform Management'];
-    if (platformData) {
-        const subWidth = platformWidth / Object.keys(platformData).length;
-        
-        Object.entries(platformData).forEach(([subcat, tools], i) => {
-            drawSubcategory(svg, subcat, tools, {
-                x: margin.left + 20 + (i * subWidth),
-                y: platformY + 10,
-                width: subWidth - 20,
-                height: platformHeight - 20,
-                maxWidth: subWidth - CONFIG.dimensions.toolsPadding,
-                maxHeight: platformHeight - 40
-            });
+    // 1) Mesurer chaque colonne principale (hauteur dictée par le contenu)
+    const colLayouts = MAIN_CATEGORIES.map(category => {
+        const subcategories = data[category] || {};
+        const subs = Object.entries(subcategories).map(([subcat, tools]) => {
+            const lines = measureTools(tools, subTextWidth);
+            return { subcat, lines, h: subcatBoxHeight(lines) };
         });
-    }
+        const contentSum = subs.reduce((s, sub) => s + sub.h, 0);         // somme des boîtes
+        const naturalH = contentSum + (subs.length + 1) * d.subGap;       // + intervalles
+        return { category, subs, contentSum, naturalH };
+    });
+    // Hauteur commune = colonne la plus haute → les autres répartissent l'espace
+    // en intervalles ÉGAUX (rééquilibrage vertical, pas de vide en bas).
+    const maxColH = Math.max(1, ...colLayouts.map(c => c.naturalH));
+
+    // 2) Mesurer la bande Platform Management (sous-catégories en ligne)
+    const platformData = data['Platform Management'] || {};
+    const pEntries = Object.entries(platformData);
+    const platformWidth = usableWidth - 20;
+    const pCellW = pEntries.length ? platformWidth / pEntries.length : platformWidth;
+    const pSubs = pEntries.map(([subcat, tools]) => ({
+        subcat, lines: measureTools(tools, pCellW - 24)
+    }));
+    const pMaxLines = Math.max(1, ...pSubs.map(s => s.lines.length));
+    const platformBandH = Math.max(d.platformHeight, d.subTitleH + pMaxLines * d.lineHeight + d.subPad + 10);
+
+    // 3) Hauteur de canvas dynamique
+    const colTop = margin.top + d.catTitleSpace;
+    const platformTitleH = 30;
+    const canvasHeight = colTop + maxColH + d.colGap + platformTitleH + platformBandH + margin.bottom;
+
+    const svg = createSVG(width, canvasHeight);
+
+    // Cadre principal + logo + titre
+    drawBox(svg, margin.left, margin.top, usableWidth, canvasHeight - margin.top - margin.bottom, 'none', CONFIG.colors.border);
+    addLogo(svg, 'logo.png');
+    drawTitle(svg, 'OSS Data Tools Landscape', margin.left + 10, margin.top - 24, {
+        fontSize: CONFIG.fonts.sizes.title, color: CONFIG.colors.titleText, anchor: 'left'
+    });
+
+    // 4) Colonnes principales (sous-catégories empilées selon leur hauteur réelle)
+    colLayouts.forEach((col, i) => {
+        const x = margin.left + i * columnWidth;
+        drawBox(svg, x + 10, colTop, columnWidth - 20, maxColH, CONFIG.colors.boxBackground);
+        drawTitle(svg, col.category, x + columnWidth / 2, colTop - 10);
+        const n = col.subs.length;
+        const gap = n > 0 ? (maxColH - col.contentSum) / (n + 1) : d.subGap;  // intervalles égaux
+        let cursorY = colTop + gap;
+        col.subs.forEach(sub => {
+            drawSubcategory(svg, sub.subcat, sub.lines, { x: x + 20, y: cursorY, width: subWidthInner, height: sub.h });
+            cursorY += sub.h + gap;
+        });
+    });
+
+    // 5) Platform Management (bande horizontale dynamique)
+    const platformY = colTop + maxColH + d.colGap + platformTitleH;
+    drawBox(svg, margin.left + 10, platformY, platformWidth, platformBandH, CONFIG.colors.boxBackground);
+    drawTitle(svg, 'Platform Management', width / 2, platformY - 12);
+    pSubs.forEach((sub, i) => {
+        drawSubcategory(svg, sub.subcat, sub.lines, {
+            x: margin.left + 20 + i * pCellW, y: platformY + 10, width: pCellW - 20, height: platformBandH - 20
+        });
+    });
 
     return svg.node().outerHTML;
 }
 
-async function convertSvgToPng(svgString, outputPath) {
+async function convertSvgToPng(svgString, outputPath, scale = 2) {
     try {
         const svg = Buffer.from(svgString);
-        
+        // Dimensions réelles lues sur le SVG racine (layout dynamique) → resize proportionnel.
+        const m = svgString.match(/<svg[^>]*\bwidth="(\d+)"[^>]*\bheight="(\d+)"/);
+        const baseW = m ? parseInt(m[1], 10) : CONFIG.dimensions.width;
+        const baseH = m ? parseInt(m[2], 10) : CONFIG.dimensions.height;
+
         await sharp(svg, {
-            // Optimisations spécifiques pour le SVG
-            density: 400, // DPI élevé
-            background: { r: 255, g: 255, b: 255, alpha: 1 }, // Fond blanc explicite
-            limitInputPixels: false // Permet de gérer de grandes images
+            density: 200, // DPI raisonnable (les images peuvent être hautes)
+            background: { r: 255, g: 255, b: 255, alpha: 1 },
+            limitInputPixels: false
         })
         .resize({
-            width: 2400, // Double de la taille SVG (1600 * 2)
-            height: 1600, // Double de la taille SVG (1000 * 2)
+            width: Math.round(baseW * scale),
+            height: Math.round(baseH * scale),
             fit: 'fill',
             position: 'center'
         })

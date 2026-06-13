@@ -42,18 +42,22 @@ class GithubDataFetcher:
         
         return contributors
 
-    def get_repo_info(self, url: str) -> Tuple[str, str, str, str, str, str]:
+    def get_repo_info(self, url: str) -> Tuple[str, str, str, str, str, str, str]:
         parts = url.strip().split("/")
         owner, repo = parts[-2], parts[-1]
-        
+
         response = requests.get(self.api_url.format(owner=owner, repo=repo), headers=self.headers)
-        
+
         try:
             if response.status_code == 200:
                 data = response.json()
                 stars = data["stargazers_count"]
                 forks = data["forks_count"]
                 created_at = datetime.strptime(data["created_at"], "%Y-%m-%dT%H:%M:%SZ").strftime("%d/%m/%Y")
+                license_info = data.get("license") or {}
+                license_spdx = license_info.get("spdx_id") or "N/A"
+                if license_spdx in ("NOASSERTION", None):
+                    license_spdx = "N/A"
                 contributors = self.get_total_contributors(url)
                 
                 # Get latest release
@@ -76,23 +80,23 @@ class GithubDataFetcher:
                         "%Y-%m-%dT%H:%M:%SZ"
                     ).strftime("%d/%m/%Y")
                 
-                return stars, forks, contributors, latest_release, latest_commit, created_at
-                
-            return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
-            
+                return stars, forks, contributors, latest_release, latest_commit, created_at, license_spdx
+
+            return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
+
         except Exception as e:
             print(f"Error processing {url}: {str(e)}")
-            return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
+            return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
 class MarkdownUpdater:
     def __init__(self, github_token: str):
         self.fetcher = GithubDataFetcher(github_token)
         self.files_to_update = {
             '01.ingestion_and_transport.md': ['Data Replication', 'Event/Stream Processing','Log Collection and Processing', 'Change Data Capture'],
-            '02.storage.md': ['File Layer', 'Metadata Layer', 'Data Modeling'],
+            '02.storage.md': ['File Layer', 'Object Storage', 'Metadata Layer', 'Data Modeling', 'Vector Storage'],
             '03.query_and_processing.md': ['Batch Processing', 'Stream Processing', 'Query Engine', 'Dataframe Processing', 'Datawarehouse & OLAP'],
-            '04.analysis_and_output.md': ['Framework', 'High-code', 'Low-code', 'No-code', 'Web Analytics'],
-            '05.platform_management.md': ['Data Quality', 'Governance', 'Workflow manager', 'Automation', 'Green IT']
+            '04.analysis_and_output.md': ['Framework', 'High-Code', 'Low-Code', 'No-Code', 'Web Analytics'],
+            '05.platform_management.md': ['Data Quality', 'Governance', 'Workflow manager', 'Automation', 'Green IT', 'Compliance & Security']
         }
 
     def extract_table_data(self, content: str, section: str) -> Tuple[List[Dict], int, int]:
@@ -102,9 +106,10 @@ class MarkdownUpdater:
         table_start = None
         table_end = None
         
-        # Trouver la section
+        # Trouver la section (correspondance insensible à la casse)
+        target = f"### {section}".lower()
         for i, line in enumerate(lines):
-            if f"### {section}" in line:
+            if target in line.lower():
                 section_start = i
                 break
         
@@ -157,7 +162,11 @@ class MarkdownUpdater:
                 # Mettre à jour les données
                 for row in table_data:
                     if 'Link' in row:
-                        stars, forks, contributors, latest_release, latest_commit, created_at = (
+                        # Ne rafraîchir que les dépôts GitHub (l'API ne couvre pas
+                        # GitLab/autres forges — ex. Odyssée sur gitlab.adullact.net).
+                        if 'github.com' not in row['Link']:
+                            continue
+                        stars, forks, contributors, latest_release, latest_commit, created_at, license_spdx = (
                             self.fetcher.get_repo_info(row['Link'])
                         )
                         row['Stars'] = str(stars)
@@ -166,6 +175,9 @@ class MarkdownUpdater:
                         row['Last Release'] = latest_release
                         row['Latest Commit'] = latest_commit
                         row['Creation Date'] = created_at
+                        # Ne remplir 'License' que si la colonne existe déjà dans la table
+                        if 'License' in row:
+                            row['License'] = license_spdx
                 
                 # Reconstruire la table
                 table_lines = []

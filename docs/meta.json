@@ -1,0 +1,81 @@
+{
+  "generatedAt": "13/06/2026",
+  "generatedAtISO": "2026-06-13",
+  "total": 261,
+  "categories": {
+    "Ingestion & Transport": 40,
+    "Storage": 35,
+    "Query & Processing": 62,
+    "Analysis & Output": 70,
+    "Platform Management": 54
+  },
+  "sections": {
+    "Ingestion & Transport / Data Replication": 11,
+    "Ingestion & Transport / Event/Stream Processing": 12,
+    "Ingestion & Transport / Log Collection and Processing": 10,
+    "Ingestion & Transport / Change Data Capture": 7,
+    "Storage / File Layer": 8,
+    "Storage / Object Storage": 6,
+    "Storage / Metadata Layer": 12,
+    "Storage / Vector Storage": 5,
+    "Storage / Data Modeling": 4,
+    "Query & Processing / Query Engine": 10,
+    "Query & Processing / Stream Processing": 16,
+    "Query & Processing / Batch Processing": 11,
+    "Query & Processing / Dataframe Processing": 9,
+    "Query & Processing / Datawarehouse & OLAP": 8,
+    "Query & Processing / Time-Series Database": 8,
+    "Analysis & Output / Framework": 22,
+    "Analysis & Output / High-code": 18,
+    "Analysis & Output / Low-code": 13,
+    "Analysis & Output / No-code": 8,
+    "Analysis & Output / Web Analytics": 9,
+    "Platform Management / Data Quality & Testing": 7,
+    "Platform Management / Governance": 11,
+    "Platform Management / Automation": 5,
+    "Platform Management / Green IT": 6,
+    "Platform Management / Workflow manager": 16,
+    "Platform Management / Compliance & Security": 9
+  },
+  "licenseFamilies": {
+    "Source-available": 11,
+    "Permissive": 219,
+    "Unknown": 6,
+    "Copyleft": 25
+  },
+  "licenses": {
+    "Elastic-2.0": 5,
+    "Apache-2.0": 153,
+    "MIT": 44,
+    "MPL-2.0": 3,
+    "EPL-2.0": 1,
+    "BSL-1.1": 4,
+    "AGPL-3.0": 16,
+    "SSPL-1.0": 1,
+    "GPL-3.0": 6,
+    "GPL-2.0": 2,
+    "LGPL-2.1": 1,
+    "PostgreSQL": 2,
+    "BSD-3-Clause": 12,
+    "N/A": 2,
+    "ISC": 3,
+    "Matplotlib": 1,
+    "BSD-2-Clause": 1,
+    "FSL-1.1-MIT": 1,
+    "EUPL-1.2": 1,
+    "Sustainable Use": 1,
+    "BUSL-1.1": 1
+  },
+  "meetsCriteria": {
+    "yes": 236,
+    "no": 25,
+    "unknown": 0
+  },
+  "sourceFiles": [
+    "01.ingestion_and_transport.md",
+    "02.storage.md",
+    "03.query_and_processing.md",
+    "04.analysis_and_output.md",
+    "05.platform_management.md"
+  ]
+}

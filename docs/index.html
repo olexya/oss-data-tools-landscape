@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OSS Data Tools Landscape</title>
+<style>
+:root {
+ --bg: #0f1419;
+ --bg-soft: #161c24;
+ --card: #1b232e;
+ --card-hover: #222d3a;
+ --border: #2a3543;
+ --text: #e6edf3;
+ --text-dim: #9bacc0;
+ --text-faint: #6b7a8d;
+ --accent: #4ea1ff;
+ --accent-soft: #1d3a5c;
+
+ --perm: #34c759; /* permissive */
+ --copyleft: #ff9f0a; /* copyleft */
+ --source-av: #ff453a;/* source-avail*/
+ --unknown: #8e9aab; /* unknown */
+
+ --top: #ffd60a; /* high stars */
+ --flop: #6b7a8d; /* low stars */
+ --ok: #34c759; /* meets yes */
+ --no: #ff453a; /* meets no */
+
+ --radius: 12px;
+ --shadow: 0 1px 3px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.25);
+ }
+
+ * { box-sizing: border-box; }
+ html, body { margin: 0; padding: 0; }
+ body {
+ background: var(--bg);
+ color: var(--text);
+ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+ line-height: 1.45;
+ -webkit-font-smoothing: antialiased;
+ }
+ a { color: var(--accent); text-decoration: none; }
+ a:hover { text-decoration: underline; }
+
+ /* ---------- Header ---------- */
+ header.site {
+ padding: 28px 20px 18px;
+ background: linear-gradient(180deg, var(--bg-soft), var(--bg));
+ border-bottom: 1px solid var(--border);
+ }
+.wrap { max-width: 1320px; margin: 0 auto; }
+ header.site h1 { margin: 0 0 6px; font-size: 1.7rem; letter-spacing: -.02em; }
+ header.site p.lede { margin: 0; color: var(--text-dim); max-width: 760px; font-size:.95rem; }
+ header.site.toplinks { margin-top: 10px; font-size:.85rem; color: var(--text-faint); }
+ header.site.toplinks a { margin-right: 14px; }
+.gen { color: var(--text-faint); font-size:.8rem; }
+
+ /* ---------- Controls ---------- */
+.controls {
+ position: sticky; top: 0; z-index: 20;
+ background: rgba(15,20,25,.92);
+ backdrop-filter: blur(8px);
+ border-bottom: 1px solid var(--border);
+ padding: 12px 20px;
+ }
+.controls.grid {
+ display: grid;
+ grid-template-columns: minmax(200px, 1.4fr) repeat(4, minmax(130px, 1fr)) auto;
+ gap: 10px;
+ align-items: end;
+ }
+ @media (max-width: 980px) {.controls.grid { grid-template-columns: 1fr 1fr; } }
+ @media (max-width: 560px) {.controls.grid { grid-template-columns: 1fr; } }
+
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field label { font-size:.7rem; text-transform: uppercase; letter-spacing:.06em; color: var(--text-faint); }
+.field input,.field select {
+ background: var(--card); color: var(--text);
+ border: 1px solid var(--border); border-radius: 8px;
+ padding: 8px 10px; font-size:.9rem; width: 100%;
+ }
+.field input:focus,.field select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+.sortrow { display: flex; gap: 8px; align-items: center; }
+.btn {
+ background: var(--card); color: var(--text);
+ border: 1px solid var(--border); border-radius: 8px;
+ padding: 8px 12px; font-size:.85rem; cursor: pointer; white-space: nowrap;
+ }
+.btn:hover { background: var(--card-hover); }
+.btn.active { border-color: var(--accent); color: var(--accent); }
+.btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+
+.toolbar2 {
+ display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+ margin-top: 10px; font-size:.85rem; color: var(--text-dim);
+ }
+.count strong { color: var(--text); }
+.viewtoggle { margin-left: auto; display: flex; gap: 6px; }
+
+ /* ---------- Legend ---------- */
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size:.78rem; color: var(--text-dim); }
+.legend.lg { display: inline-flex; align-items: center; gap: 6px; }
+.swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+ /* ---------- Cards ---------- */
+ main { padding: 20px; }
+ #cards {
+ display: grid;
+ grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+ gap: 14px;
+ }
+.card {
+ background: var(--card); border: 1px solid var(--border);
+ border-left: 4px solid var(--unknown);
+ border-radius: var(--radius); padding: 14px 16px;
+ box-shadow: var(--shadow);
+ display: flex; flex-direction: column; gap: 10px;
+ transition: transform.08s ease, background.12s ease;
+ }
+.card:hover { background: var(--card-hover); transform: translateY(-2px); }
+.card.lic-Permissive { border-left-color: var(--perm); }
+.card.lic-Copyleft { border-left-color: var(--copyleft); }
+.card.lic-Source-available { border-left-color: var(--source-av); }
+.card.lic-Unknown { border-left-color: var(--unknown); }
+.card.old { opacity:.62; }
+
+.card.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.card.name { font-weight: 650; font-size: 1.05rem; letter-spacing: -.01em; }
+.card.name a { color: var(--text); }
+.card.name a:hover { color: var(--accent); }
+
+.pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.pill {
+ font-size:.68rem; padding: 2px 8px; border-radius: 999px;
+ border: 1px solid var(--border); color: var(--text-dim); background: var(--bg-soft);
+ white-space: nowrap;
+ }
+.pill.cat { color: var(--accent); border-color: var(--accent-soft); }
+.pill.lic { color: #fff; }
+.pill.lic-Permissive { background: var(--perm); border-color: var(--perm); color:#06270f; }
+.pill.lic-Copyleft { background: var(--copyleft); border-color: var(--copyleft); color:#3a2400; }
+.pill.lic-Source-available { background: var(--source-av); border-color: var(--source-av); color:#fff; }
+.pill.lic-Unknown { background: transparent; color: var(--text-faint); }
+
+.badge-meets {
+ font-size:.68rem; padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+ display: inline-flex; align-items: center; gap: 5px;
+ }
+.badge-meets.yes { background: rgba(52,199,89,.15); color: var(--ok); border: 1px solid rgba(52,199,89,.4); }
+.badge-meets.no { background: rgba(255,69,58,.12); color: var(--no); border: 1px solid rgba(255,69,58,.4); }
+.badge-meets.unk { background: var(--bg-soft); color: var(--text-faint); border: 1px solid var(--border); }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot.yes { background: var(--ok); }.dot.no { background: var(--no); }.dot.unk { background: var(--text-faint); }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat { background: var(--bg-soft); border-radius: 8px; padding: 6px 8px; text-align: center; }
+.stat.v { font-weight: 650; font-size:.95rem; }
+.stat.v.tier-top { color: var(--top); }
+.stat.v.tier-flop { color: var(--flop); }
+.stat.k { font-size:.62rem; text-transform: uppercase; letter-spacing:.05em; color: var(--text-faint); }
+
+.dates { font-size:.76rem; color: var(--text-dim); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.dates.recent { color: var(--ok); }
+.dates.stale { color: var(--flop); }
+
+ /* ---------- Table ---------- */
+ #tableWrap { overflow-x: auto; }
+ table { border-collapse: collapse; width: 100%; font-size:.85rem; }
+ thead th {
+ position: sticky; top: 0; background: var(--bg-soft); z-index: 5;
+ text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--border);
+ cursor: pointer; user-select: none; white-space: nowrap;
+ }
+ thead th:hover { color: var(--accent); }
+ thead th.arrow { color: var(--accent); font-size:.7rem; }
+ tbody td { padding: 7px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+ tbody tr:hover { background: var(--card-hover); }
+ tbody tr.old { opacity:.6; }
+ td.num { text-align: right; font-variant-numeric: tabular-nums; }
+ td.lic-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 6px; vertical-align: middle; }
+
+.hidden { display: none!important; }
+.empty { padding: 40px; text-align: center; color: var(--text-faint); }
+ footer { padding: 24px 20px; color: var(--text-faint); font-size:.8rem; text-align: center; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<header class="site">
+ <div class="wrap">
+ <h1>OSS Data Tools Landscape</h1>
+ <p class="lede">Browse, filter and sort the open-source data tooling catalogue &mdash; ingestion, storage,
+ query &amp; processing, analysis, and platform management. Data is generated from the Markdown catalogues
+ in the repository.</p>
+ <div class="toplinks">
+ <a href="https://github.com/olexya/oss-data-tools-landscape" target="_blank" rel="noopener">&#8592; Back to repository</a>
+ <span class="gen" id="genInfo"></span>
+ </div>
+ </div>
+</header>
+
+<div class="controls">
+ <div class="wrap">
+ <div class="grid">
+ <div class="field">
+ <label for="q">Search tool</label>
+ <input id="q" type="search" placeholder="Type a tool name&hellip;" autocomplete="off" />
+ </div>
+ <div class="field">
+ <label for="fCat">Category</label>
+ <select id="fCat"><option value="">All categories</option></select>
+ </div>
+ <div class="field">
+ <label for="fSec">Section</label>
+ <select id="fSec"><option value="">All sections</option></select>
+ </div>
+ <div class="field">
+ <label for="fLic">License family</label>
+ <select id="fLic">
+ <option value="">All licenses</option>
+ <option value="Permissive">Permissive</option>
+ <option value="Copyleft">Copyleft</option>
+ <option value="Source-available">Source-available</option>
+ <option value="Unknown">Unknown / N/A</option>
+ </select>
+ </div>
+ <div class="field">
+ <label for="fMeets">Meets criteria</label>
+ <select id="fMeets">
+ <option value="">All</option>
+ <option value="yes">Yes</option>
+ <option value="no">No</option>
+ <option value="unk">Unknown</option>
+ </select>
+ </div>
+ <div class="field">
+ <label for="sortKey">Sort by</label>
+ <div class="sortrow">
+ <select id="sortKey">
+ <option value="stars">Stars</option>
+ <option value="contributors">Contributors</option>
+ <option value="forks">Forks</option>
+ <option value="creationDate">Creation date</option>
+ <option value="latestCommit">Last commit</option>
+ <option value="tool">Name</option>
+ </select>
+ <button class="btn" id="sortDir" aria-pressed="false" title="Toggle ascending/descending">&#9660;</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="toolbar2">
+ <span class="count">Showing <strong id="shown">0</strong> of <strong id="total">0</strong> solutions</span>
+ <div class="legend" aria-label="Legend">
+ <span class="lg"><span class="swatch" style="background:var(--perm)"></span>Permissive</span>
+ <span class="lg"><span class="swatch" style="background:var(--copyleft)"></span>Copyleft</span>
+ <span class="lg"><span class="swatch" style="background:var(--source-av)"></span>Source-available</span>
+ <span class="lg"><span class="swatch" style="background:var(--unknown)"></span>Unknown</span>
+ <span class="lg"><span class="dot yes"></span>Meets criteria</span>
+ <span class="lg"><span class="swatch" style="background:var(--top)"></span>Top stars</span>
+ <span class="lg" style="opacity:.6">Faded = stale (old last commit)</span>
+ </div>
+ <div class="viewtoggle">
+ <button class="btn" id="viewCards" aria-pressed="true">Cards</button>
+ <button class="btn" id="viewTable" aria-pressed="false">Table</button>
+ <button class="btn" id="reset" title="Reset all filters">Reset</button>
+ </div>
+ </div>
+ </div>
+</div>
+
+<main class="wrap">
+ <div id="cards"></div>
+ <div id="tableWrap" class="hidden">
+ <table>
+ <thead><tr id="thead"></tr></thead>
+ <tbody id="tbody"></tbody>
+ </table>
+ </div>
+ <div id="empty" class="empty hidden">No solutions match the current filters.</div>
+</main>
+
+<footer class="wrap">
+ Generated statically &middot; <a href="https://github.com/olexya/oss-data-tools-landscape" target="_blank" rel="noopener">olexya/oss-data-tools-landscape</a>
+</footer>
+
+<!-- Données embarquées (générées par build-data.mjs) : permet l'ouverture directe
+     du fichier sans serveur (file://) ET le rendu GitHub Pages. Optionnel : si absent,
+     l'app retombe sur fetch('data.json'). -->
+<script src="data.js"></script>
+<script>
+/* ===================== License families ===================== */
+function licenseFamily(license) {
+ if (!license) return 'Unknown';
+ const l = String(license).toLowerCase();
+ if (/\bagpl\b/.test(l)) return 'Copyleft';
+ if (/\blgpl\b/.test(l)) return 'Copyleft';
+ if (/\bgpl\b/.test(l)) return 'Copyleft';
+ if (/\b(sspl|bsl|business source|elastic|fsl|rcl|tsl|timescale)\b/.test(l)) return 'Source-available';
+ if (/\b(mit|apache|bsd|isc|eupl|mpl|postgresql|zlib|unlicense)\b/.test(l)) return 'Permissive';
+ return 'Unknown';
+}
+
+/* ===================== State ===================== */
+let DATA = [];
+const state = {
+ q: '', cat: '', sec: '', lic: '', meets: '',
+ sortKey: 'stars', sortDir: -1, // -1 = desc, 1 = asc
+ view: 'cards',
+};
+
+/* thresholds computed from data */
+let STAR_TOP = Infinity, STAR_FLOP = 0;
+const NOW_YEAR = 2026;
+
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => (n == null? '—': n.toLocaleString('en-US'));
+const yearOf = (iso) => (iso? Number(iso.slice(0, 4)): null);
+function fmtDate(iso) {
+ if (!iso) return '—';
+ const [y, m, d] = iso.split('-');
+ return `${d}/${m}/${y}`;
+}
+
+/* ===================== Tiers (top / flop / recency) ===================== */
+function starTier(stars) {
+ if (stars == null) return 'mid';
+ if (stars >= STAR_TOP) return 'top';
+ if (stars <= STAR_FLOP) return 'flop';
+ return 'mid';
+}
+function isStale(iso) {
+ const y = yearOf(iso);
+ if (y == null) return true; // unknown last commit -> treat as stale/faded
+ return (NOW_YEAR - y) >= 2; // 2+ years without a commit
+}
+function commitRecency(iso) {
+ const y = yearOf(iso);
+ if (y == null) return 'unknown';
+ if ((NOW_YEAR - y) <= 0) return 'recent';
+ if ((NOW_YEAR - y) >= 2) return 'stale';
+ return 'mid';
+}
+
+/* ===================== Filtering & sorting ===================== */
+function applyFilters() {
+ const q = state.q.trim().toLowerCase();
+ let rows = DATA.filter((r) => {
+ if (q &&!r.tool.toLowerCase().includes(q)) return false;
+ if (state.cat && r.category!== state.cat) return false;
+ if (state.sec && r.section!== state.sec) return false;
+ if (state.lic && licenseFamily(r.license)!== state.lic) return false;
+ if (state.meets) {
+ const mv = r.meetsCriteria === true? 'yes': r.meetsCriteria === false? 'no': 'unk';
+ if (mv!== state.meets) return false;
+ }
+ return true;
+ });
+
+ const k = state.sortKey, dir = state.sortDir;
+ rows.sort((a, b) => {
+ let av = a[k], bv = b[k];
+ if (k === 'tool') {
+ return av.localeCompare(bv) * dir;
+ }
+ // dates compared as ISO strings (sortable); numbers as numbers.
+ const an = (av == null), bn = (bv == null);
+ if (an && bn) return a.tool.localeCompare(b.tool);
+ if (an) return 1; // nulls always last
+ if (bn) return -1;
+ if (av < bv) return -1 * dir;
+ if (av > bv) return 1 * dir;
+ return a.tool.localeCompare(b.tool);
+ });
+ return rows;
+}
+
+/* ===================== Rendering ===================== */
+function render() {
+ const rows = applyFilters();
+ $('shown').textContent = rows.length;
+ $('total').textContent = DATA.length;
+ $('empty').classList.toggle('hidden', rows.length!== 0);
+
+ if (state.view === 'cards') {
+ $('cards').classList.remove('hidden');
+ $('tableWrap').classList.add('hidden');
+ renderCards(rows);
+ } else {
+ $('cards').classList.add('hidden');
+ $('tableWrap').classList.remove('hidden');
+ renderTable(rows);
+ }
+}
+
+function meetsBadge(r) {
+ if (r.meetsCriteria === true)
+ return `<span class="badge-meets yes" title="${escapeHtml(r.meetsCriteriaRaw || 'Yes')}"><span class="dot yes"></span>Meets criteria</span>`;
+ if (r.meetsCriteria === false)
+ return `<span class="badge-meets no"><span class="dot no"></span>Below criteria</span>`;
+ return `<span class="badge-meets unk"><span class="dot unk"></span>Unknown</span>`;
+}
+
+function renderCards(rows) {
+ const c = $('cards');
+ if (!rows.length) { c.innerHTML = ''; return; }
+ const html = rows.map((r) => {
+ const fam = licenseFamily(r.license);
+ const stale = isStale(r.latestCommit);
+ const sTier = starTier(r.stars);
+ const rec = commitRecency(r.latestCommit);
+ const recClass = rec === 'recent'? 'recent': (rec === 'stale'? 'stale': '');
+ const licPill = r.license
+? `<span class="pill lic lic-${fam}" title="${escapeHtml(r.license)}">${escapeHtml(r.license)}</span>`
+: `<span class="pill lic lic-Unknown" title="License unknown">License N/A</span>`;
+ const nameInner = r.link
+? `<a href="${escapeAttr(r.link)}" target="_blank" rel="noopener">${escapeHtml(r.tool)} ↗</a>`
+: escapeHtml(r.tool);
+ return `
+ <article class="card lic-${fam} ${stale? 'old': ''}">
+ <div class="head">
+ <div class="name">${nameInner}</div>
+ ${meetsBadge(r)}
+ </div>
+ <div class="pills">
+ <span class="pill cat">${escapeHtml(r.category)}</span>
+ ${r.section? `<span class="pill">${escapeHtml(r.section)}</span>`: ''}
+ ${licPill}
+ </div>
+ <div class="stats">
+ <div class="stat"><div class="v tier-${sTier}">${fmt(r.stars)}</div><div class="k">Stars</div></div>
+ <div class="stat"><div class="v">${fmt(r.contributors)}</div><div class="k">Contributors</div></div>
+ <div class="stat"><div class="v">${fmt(r.forks)}</div><div class="k">Forks</div></div>
+ </div>
+ <div class="dates">
+ <span>Created ${fmtDate(r.creationDate)}</span>
+ <span class="${recClass}">Last commit ${fmtDate(r.latestCommit)}</span>
+ ${r.lastRelease? `<span>Release ${fmtDate(r.lastRelease)}</span>`: ''}
+ </div>
+ </article>`;
+ }).join('');
+ c.innerHTML = html;
+}
+
+const COLS = [
+ { key: 'tool', label: 'Tool', num: false },
+ { key: 'category', label: 'Category', num: false, plain: true },
+ { key: 'section', label: 'Section', num: false, plain: true },
+ { key: 'stars', label: 'Stars', num: true },
+ { key: 'contributors', label: 'Contributors', num: true },
+ { key: 'forks', label: 'Forks', num: true },
+ { key: 'creationDate', label: 'Created', num: false, date: true },
+ { key: 'latestCommit', label: 'Last commit', num: false, date: true },
+ { key: 'lastRelease', label: 'Last release', num: false, date: true },
+ { key: 'meets', label: 'Criteria', num: false, plain: true },
+ { key: 'license', label: 'License', num: false, plain: true },
+];
+
+function renderTable(rows) {
+ const thead = $('thead');
+ thead.innerHTML = COLS.map((col) => {
+ const sortable = ['tool', 'stars', 'contributors', 'forks', 'creationDate', 'latestCommit', 'lastRelease'].includes(col.key);
+ let arrow = '';
+ if (sortable && state.sortKey === col.key) arrow = ` <span class="arrow">${state.sortDir === -1? '▼': '▲'}</span>`;
+ return `<th data-key="${col.key}" ${sortable? '': 'style="cursor:default"'}>${col.label}${arrow}</th>`;
+ }).join('');
+ thead.querySelectorAll('th[data-key]').forEach((th) => {
+ const key = th.getAttribute('data-key');
+ if (['tool','stars','contributors','forks','creationDate','latestCommit','lastRelease'].includes(key)) {
+ th.onclick = () => {
+ if (state.sortKey === key) state.sortDir *= -1;
+ else { state.sortKey = key; state.sortDir = (key === 'tool')? 1: -1; }
+ syncSortControls(); render();
+ };
+ }
+ });
+
+ const tb = $('tbody');
+ tb.innerHTML = rows.map((r) => {
+ const fam = licenseFamily(r.license);
+ const stale = isStale(r.latestCommit);
+ const sTier = starTier(r.stars);
+ const nameCell = r.link
+? `<a href="${escapeAttr(r.link)}" target="_blank" rel="noopener">${escapeHtml(r.tool)}</a>`
+: escapeHtml(r.tool);
+ const mv = r.meetsCriteria === true? 'yes': r.meetsCriteria === false? 'no': 'unk';
+ const mLabel = mv === 'yes'? 'Yes': mv === 'no'? 'No': '—';
+ const starStyle = sTier === 'top'? 'color:var(--top);font-weight:650': (sTier === 'flop'? 'color:var(--flop)': '');
+ return `
+ <tr class="${stale? 'old': ''}">
+ <td>${nameCell}</td>
+ <td>${escapeHtml(r.category)}</td>
+ <td>${r.section? escapeHtml(r.section): '—'}</td>
+ <td class="num" style="${starStyle}">${fmt(r.stars)}</td>
+ <td class="num">${fmt(r.contributors)}</td>
+ <td class="num">${fmt(r.forks)}</td>
+ <td>${fmtDate(r.creationDate)}</td>
+ <td>${fmtDate(r.latestCommit)}</td>
+ <td>${fmtDate(r.lastRelease)}</td>
+ <td><span class="dot ${mv}"></span> ${mLabel}</td>
+ <td>${r.license? `<span class="lic-dot" style="background:${famColor(fam)}"></span>${escapeHtml(r.license)}`: '—'}</td>
+ </tr>`;
+ }).join('');
+}
+
+function famColor(fam) {
+ return ({
+ 'Permissive': 'var(--perm)',
+ 'Copyleft': 'var(--copyleft)',
+ 'Source-available': 'var(--source-av)',
+ })[fam] || 'var(--unknown)';
+}
+
+/* ===================== Helpers ===================== */
+function escapeHtml(s) {
+ return String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+function uniqueSorted(arr) { return [...new Set(arr)].filter(Boolean).sort((a, b) => a.localeCompare(b)); }
+
+function populateSelect(sel, values, keepFirst = true) {
+ const first = keepFirst? sel.firstElementChild.cloneNode(true): null;
+ sel.innerHTML = '';
+ if (first) sel.appendChild(first);
+ values.forEach((v) => {
+ const o = document.createElement('option');
+ o.value = v; o.textContent = v;
+ sel.appendChild(o);
+ });
+}
+
+function rebuildSectionOptions() {
+ const cur = state.sec;
+ const pool = state.cat? DATA.filter((r) => r.category === state.cat): DATA;
+ const secs = uniqueSorted(pool.map((r) => r.section));
+ populateSelect($('fSec'), secs);
+ // keep selection if still valid
+ if (secs.includes(cur)) $('fSec').value = cur; else { state.sec = ''; $('fSec').value = ''; }
+}
+
+function syncSortControls() {
+ $('sortKey').value = state.sortKey;
+ const b = $('sortDir');
+ b.setAttribute('aria-pressed', String(state.sortDir === 1));
+ b.innerHTML = state.sortDir === -1? '▼': '▲';
+ b.title = state.sortDir === -1? 'Descending (click for ascending)': 'Ascending (click for descending)';
+}
+
+/* ===================== Wiring ===================== */
+function bind() {
+ $('q').addEventListener('input', (e) => { state.q = e.target.value; render(); });
+ $('fCat').addEventListener('change', (e) => { state.cat = e.target.value; rebuildSectionOptions(); render(); });
+ $('fSec').addEventListener('change', (e) => { state.sec = e.target.value; render(); });
+ $('fLic').addEventListener('change', (e) => { state.lic = e.target.value; render(); });
+ $('fMeets').addEventListener('change', (e) => { state.meets = e.target.value; render(); });
+ $('sortKey').addEventListener('change', (e) => { state.sortKey = e.target.value; render(); });
+ $('sortDir').addEventListener('click', () => { state.sortDir *= -1; syncSortControls(); render(); });
+
+ $('viewCards').addEventListener('click', () => setView('cards'));
+ $('viewTable').addEventListener('click', () => setView('table'));
+ $('reset').addEventListener('click', resetAll);
+}
+
+function setView(v) {
+ state.view = v;
+ $('viewCards').setAttribute('aria-pressed', String(v === 'cards'));
+ $('viewTable').setAttribute('aria-pressed', String(v === 'table'));
+ render();
+}
+
+function resetAll() {
+ Object.assign(state, { q:'', cat:'', sec:'', lic:'', meets:'', sortKey:'stars', sortDir:-1 });
+ $('q').value = ''; $('fCat').value=''; $('fLic').value=''; $('fMeets').value='';
+ rebuildSectionOptions(); syncSortControls(); render();
+}
+
+function computeThresholds() {
+ const stars = DATA.map((r) => r.stars).filter((n) => n!= null).sort((a, b) => a - b);
+ if (!stars.length) return;
+ const pct = (p) => stars[Math.min(stars.length - 1, Math.floor(p * stars.length))];
+ STAR_TOP = pct(0.80); // top quintile = "top"
+ STAR_FLOP = pct(0.20); // bottom quintile = "flop"
+}
+
+async function loadMeta() {
+ try {
+ // Données embarquées (data.js) → fonctionne même en ouverture directe (file://).
+ let m = (typeof window !== 'undefined') ? window.__LANDSCAPE_META__ : null;
+ if (!m) {
+ const res = await fetch('meta.json', { cache: 'no-store' });
+ if (!res.ok) return;
+ m = await res.json();
+ }
+ if (m && m.generatedAt) $('genInfo').textContent = `· Data generated ${m.generatedAt} · ${m.total} solutions`;
+ } catch (_) { /* meta is optional */ }
+}
+
+async function init() {
+ bind();
+ await loadMeta();
+ try {
+ // 1) Données embarquées via <script src="data.js"> (marche en file://).
+ if (typeof window !== 'undefined' && Array.isArray(window.__LANDSCAPE_DATA__)) {
+ DATA = window.__LANDSCAPE_DATA__;
+ } else {
+ // 2) Sinon, fetch (serveur HTTP / GitHub Pages).
+ const res = await fetch('data.json', { cache: 'no-store' });
+ if (!res.ok) throw new Error('HTTP ' + res.status);
+ DATA = await res.json();
+ }
+ } catch (e) {
+ $('cards').innerHTML = `<div class="empty">Could not load <code>data.json</code> (${escapeHtml(e.message)}).<br>
+ If you opened this file directly, run a local server (e.g. <code>python3 -m http.server</code>) from the <code>docs/</code> folder,
+ or regenerate data with <code>node docs/build-data.mjs</code>.</div>`;
+ return;
+ }
+ computeThresholds();
+ populateSelect($('fCat'), uniqueSorted(DATA.map((r) => r.category)));
+ rebuildSectionOptions();
+ syncSortControls();
+ render();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

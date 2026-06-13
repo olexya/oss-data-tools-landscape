@@ -17,6 +17,12 @@ The open-source community has developed numerous solutions for various aspects o
 - [Analysis and Output](04.analysis_and_output.md)
 - [Platform Management](05.platform_management.md)
 
+**Cross-cutting analyses & resources:**
+- [Classification by data flow](06.classification_par_flux.md) (streaming / micro-batching / batching)
+- [Flow × Function matrix](07.matrice_flux_fonction.md) · [Visualisations](08.visualisations_classification.md)
+- [Licenses](09.licenses.md) — license families, limits & possibilities of each solution
+- **Interactive site** (filter, sort, top/flop, recent/old, by license): see [`docs/`](docs/) (GitHub Pages)
+
 <img src="platform.png" alt="Overview" style="width:800px;"/>
 
 While this diversity is a testament to the innovation in the field, it can make the decision-making process complex and time-consuming for organizations looking to build or enhance their data infrastructure.
@@ -46,4 +52,4 @@ An application to understand statistique of [Steam](https://store.steampowered.c
 
 The application using [Kestra](https://kestra.io), [dbt](https://www.getdbt.com), [Evidence](https://evidence.dev) and [PostgreSQL](postgresql.org/)
 
-To get the project : https://github.com/olexya/data-games-viz
+To get the project: https://github.com/olexya/data-games-viz
