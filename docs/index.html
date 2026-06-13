@@ -174,6 +174,7 @@
  cursor: pointer; user-select: none; white-space: nowrap;
  }
  thead th:hover { color: var(--accent); }
+ .card[data-href], tbody tr[data-href] { cursor: pointer; }
  thead th.arrow { color: var(--accent); font-size:.7rem; }
  tbody td { padding: 7px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
  tbody tr:hover { background: var(--card-hover); }
@@ -194,7 +195,7 @@
  query &amp; processing, analysis, and platform management. Data is generated from the Markdown catalogues
  in the repository.</p>
  <div class="toplinks">
- <a href="https://github.com/olexya/oss-data-tools-landscape" target="_blank" rel="noopener">&#8592; Back to repository</a>
+ <a href="../">&#8592; Home</a> &middot; <a href="https://github.com/olexya/oss-data-tools-landscape" target="_blank" rel="noopener">GitHub repository &#8599;</a>
  <span class="gen" id="genInfo"></span>
  </div>
  </div>
@@ -418,7 +419,7 @@ function renderCards(rows) {
 ? `<a href="${escapeAttr(r.link)}" target="_blank" rel="noopener">${escapeHtml(r.tool)} ↗</a>`
 : escapeHtml(r.tool);
  return `
- <article class="card lic-${fam} ${stale? 'old': ''}">
+ <article class="card lic-${fam} ${stale? 'old': ''}" ${r.link ? `data-href="${escapeAttr(r.link)}"` : ''}>
  <div class="head">
  <div class="name">${nameInner}</div>
  ${meetsBadge(r)}
@@ -488,7 +489,7 @@ function renderTable(rows) {
  const mLabel = mv === 'yes'? 'Yes': mv === 'no'? 'No': '—';
  const starStyle = sTier === 'top'? 'color:var(--top);font-weight:650': (sTier === 'flop'? 'color:var(--flop)': '');
  return `
- <tr class="${stale? 'old': ''}">
+ <tr class="${stale? 'old': ''}" ${r.link ? `data-href="${escapeAttr(r.link)}"` : ''}>
  <td>${nameCell}</td>
  <td>${escapeHtml(r.category)}</td>
  <td>${r.section? escapeHtml(r.section): '—'}</td>
@@ -623,6 +624,11 @@ async function init() {
  render();
 }
 
+document.addEventListener('click', (e) => {
+ if (e.target.closest('a')) return;
+ const host = e.target.closest('[data-href]');
+ if (host) window.open(host.getAttribute('data-href'), '_blank', 'noopener');
+});
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>

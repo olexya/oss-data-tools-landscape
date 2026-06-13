@@ -1,37 +1,37 @@
-# Solutions Commerciales - Data Tools Landscape
+# Commercial Solutions - Data Tools Landscape
 
-> **Objectif:** Recenser et classifier les solutions commerciales/propriétaires du marché pour construire une plateforme de données.
+> **Objective:** Identify and classify the market's commercial/proprietary solutions for building a data platform.
 
 ---
 
-## Vue d'Ensemble
+## Overview
 
 ![Commercial Data Tools Landscape](commercial_infrastructure.svg)
 
 ---
 
-## Structure du Répertoire
+## Directory Structure
 
-Ce répertoire reprend la **même organisation** que les solutions open-source, adaptée aux outils commerciaux:
+This directory follows the **same organization** as the open-source solutions, adapted to commercial tools:
 
-| Fichier | Description | Équivalent OSS |
+| File | Description | OSS Equivalent |
 |---------|-------------|----------------|
-| [01.ingestion_and_transport.md](01.ingestion_and_transport.md) | ETL/ELT, Streaming, CDC commerciaux | 01.ingestion_and_transport.md |
+| [01.ingestion_and_transport.md](01.ingestion_and_transport.md) | Commercial ETL/ELT, Streaming, CDC | 01.ingestion_and_transport.md |
 | [02.storage.md](02.storage.md) | Cloud DW, Lakehouse, Object Storage | 02.storage.md |
 | [03.query_and_processing.md](03.query_and_processing.md) | Query engines, Stream/Batch processing | 03.query_and_processing.md |
 | [04.analysis_and_output.md](04.analysis_and_output.md) | BI, Dashboards, Web Analytics | 04.analysis_and_output.md |
 | [05.platform_management.md](05.platform_management.md) | Orchestration, Governance, Quality | 05.platform_management.md |
-| [06.classification_par_flux.md](06.classification_par_flux.md) | Classification Streaming/Micro/Batch | 06.classification_par_flux.md |
-| [07.matrice_flux_fonction.md](07.matrice_flux_fonction.md) | Matrice Flux × Fonction | 07.matrice_flux_fonction.md |
-| [08.visualisations_classification.md](08.visualisations_classification.md) | Diagrammes et visualisations | 08.visualisations_classification.md |
+| [06.classification_par_flux.md](06.classification_par_flux.md) | Streaming/Micro/Batch Classification | 06.classification_par_flux.md |
+| [07.matrice_flux_fonction.md](07.matrice_flux_fonction.md) | Flow × Function Matrix | 07.matrice_flux_fonction.md |
+| [08.visualisations_classification.md](08.visualisations_classification.md) | Diagrams and visualizations | 08.visualisations_classification.md |
 
 ---
 
-## Organisation Thématique
+## Thematic Organization
 
-### Par Catégorie Fonctionnelle
+### By Functional Category
 
-Chaque fichier suit la **même structure** que son équivalent open-source:
+Each file follows the **same structure** as its open-source equivalent:
 
 #### 01. Ingestion & Transport
 - **Data Replication**: Fivetran, Stitch, Matillion, Informatica...
@@ -71,32 +71,32 @@ Chaque fichier suit la **même structure** que son équivalent open-source:
 
 ## Classifications
 
-### Par Flux de Données (06)
+### By Data Flow (06)
 
-| Mode | Latence | Leaders Commerciaux |
+| Mode | Latency | Commercial Leaders |
 |------|---------|---------------------|
 | Streaming | < 1s | Confluent, Kinesis, Striim |
 | Micro-Batch | 1s-5min | Databricks, Snowflake, Fivetran |
 | Batching | > 5min | Fivetran, dbt Cloud, Snowflake |
 
-### Matrice Flux × Fonction (07)
+### Flow × Function Matrix (07)
 
-Vue bidimensionnelle combinant:
-- **Axe temporel**: Streaming, Micro-Batching, Batching
-- **Axe fonctionnel**: Collecte, Transport, Stockage, Traitement, Analyse, Gouvernance
+Two-dimensional view combining:
+- **Temporal axis**: Streaming, Micro-Batching, Batching
+- **Functional axis**: Collection, Transport, Storage, Processing, Analysis, Governance
 
-### Visualisations (08)
+### Visualizations (08)
 
-Diagrammes Mermaid pour:
+Mermaid diagrams for:
 - Modern Data Stack Enterprise
 - Real-time Analytics Stack
 - Databricks Lakehouse Architecture
 
 ---
 
-## Mapping Open Source → Commercial
+## Open Source → Commercial Mapping
 
-| Catégorie | Open Source | Commercial |
+| Category | Open Source | Commercial |
 |-----------|-------------|------------|
 | ETL/ELT | Airbyte | Fivetran |
 | CDC | Debezium | Striim, Arcion |
@@ -113,9 +113,9 @@ Diagrammes Mermaid pour:
 
 ---
 
-## Estimation Budgétaire
+## Budget Estimate
 
-| Taille | Budget Annuel | Stack Type |
+| Size | Annual Budget | Stack Type |
 |--------|---------------|------------|
 | Startup (< 50 emp) | ~$30K | Fivetran → Snowflake → dbt → Preset |
 | Scale-up (50-200) | ~$220K | + Looker + Monte Carlo + Atlan |
@@ -123,13 +123,13 @@ Diagrammes Mermaid pour:
 
 ---
 
-## Références
+## References
 
-- [Solutions Open Source](../README.md)
-- [Diagramme Infrastructure OSS](../data_infrastructure.svg)
+- [Open Source Solutions](../README.md)
+- [OSS Infrastructure Diagram](../data_infrastructure.svg)
 
 ---
 
-**Document créé le:** 2025-12-15
-**Dernière mise à jour:** 2025-12-15
+**Document created on:** 2025-12-15
+**Last updated:** 2025-12-15
 **Version:** 2.0

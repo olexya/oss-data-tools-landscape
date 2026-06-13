@@ -39,13 +39,13 @@
   },
   "licenseFamilies": {
     "Source-available": 11,
-    "Permissive": 219,
-    "Unknown": 6,
+    "Permissive": 218,
+    "Unknown": 7,
     "Copyleft": 25
   },
   "licenses": {
     "Elastic-2.0": 5,
-    "Apache-2.0": 153,
+    "Apache-2.0": 152,
     "MIT": 44,
     "MPL-2.0": 3,
     "EPL-2.0": 1,
@@ -57,11 +57,11 @@
     "LGPL-2.1": 1,
     "PostgreSQL": 2,
     "BSD-3-Clause": 12,
-    "N/A": 2,
+    "N/A": 3,
     "ISC": 3,
     "Matplotlib": 1,
     "BSD-2-Clause": 1,
-    "FSL-1.1-MIT": 1,
+    "FSL-1.1": 1,
     "EUPL-1.2": 1,
     "Sustainable Use": 1,
     "BUSL-1.1": 1

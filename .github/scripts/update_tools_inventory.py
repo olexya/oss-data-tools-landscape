@@ -175,8 +175,11 @@ class MarkdownUpdater:
                         row['Last Release'] = latest_release
                         row['Latest Commit'] = latest_commit
                         row['Creation Date'] = created_at
-                        # Ne remplir 'License' que si la colonne existe déjà dans la table
-                        if 'License' in row:
+                        # Ne remplir 'License' que si la colonne existe ET que l'API
+                        # renvoie une vraie licence SPDX. On NE remplace PAS une valeur
+                        # existante par 'N/A' (cas NOASSERTION : Elastic-2.0, BSL, licences
+                        # custom… renseignées à la main et que l'API ne sait pas classer).
+                        if 'License' in row and license_spdx and license_spdx != 'N/A':
                             row['License'] = license_spdx
                 
                 # Reconstruire la table

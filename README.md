@@ -1,55 +1,76 @@
 # OSS Data Tools Landscape
 
-Welcome to the Composable Data Platform project repository. This project was developed with the primary objectives of:
-- Identifying open source solutions available in the market for building a composable data platform (note: this list may not be exhaustive due to the vast number of solutions).
-- Demonstrating the functionality of these solutions through a simple example implementation (https://github.com/olexya/data-games-viz)
+A landscape of **open-source** solutions for building a **composable data platform**:
+an inventory by function, a classification by data flow, licenses, and an interactive report.
 
-## Market Study
+> **[Open the interactive report](docs/)** — search, filters (category, section, license,
+> criteria) and sorting (stars, dates), with top/flop and recent/stale cues. Hosted on
+> GitHub Pages, and also works when opened directly.
 
-### Navigating the Open-Source Data Landscape
-In today's data-driven world, a myriad of open-source solutions are available for processing, analyzing, and managing data. This abundance of options, while providing great flexibility and power, can also be overwhelming for businesses trying to select the right tools for their specific needs.
+## Navigation
 
-### The Challenge of Choice
-The open-source community has developed numerous solutions for various aspects of data handling, including:
-- [Ingestion and Transport](01.ingestion_and_transport.md)
-- [Storage](02.storage.md)
-- [Query and Processing](03.query_and_processing.md)
-- [Analysis and Output](04.analysis_and_output.md)
-- [Platform Management](05.platform_management.md)
+- **Catalogues**: [Ingestion & Transport](01.ingestion_and_transport.md) ·
+  [Storage](02.storage.md) · [Query & Processing](03.query_and_processing.md) ·
+  [Analysis & Output](04.analysis_and_output.md) ·
+  [Platform Management](05.platform_management.md)
+- **Analyses**: [Classification by data flow](06.classification_par_flux.md) ·
+  [Flow × Function matrix](07.matrice_flux_fonction.md) ·
+  [Visualisations](08.visualisations_classification.md)
+- **[Licenses](09.licenses.md)** (families, limits and possibilities) ·
+  **[Interactive report](docs/)**
+- **Profile guides**: [`company/`](company/) — tool selection by company size.
 
-**Cross-cutting analyses & resources:**
-- [Classification by data flow](06.classification_par_flux.md) (streaming / micro-batching / batching)
-- [Flow × Function matrix](07.matrice_flux_fonction.md) · [Visualisations](08.visualisations_classification.md)
-- [Licenses](09.licenses.md) — license families, limits & possibilities of each solution
-- **Interactive site** (filter, sort, top/flop, recent/old, by license): see [`docs/`](docs/) (GitHub Pages)
+## Project goals
+
+- Identify the open-source solutions available on the market to build a composable data
+  platform (note: this list may not be exhaustive, given the sheer number of solutions).
+- Demonstrate how they work through a simple example implementation:
+  [github.com/olexya/data-games-viz](https://github.com/olexya/data-games-viz).
+
+## Market study
+
+### Navigating the open-source data landscape
+
+In today's data-driven world, a myriad of open-source solutions are available to process,
+analyze and manage data. This abundance offers flexibility and power, but can also be
+overwhelming for organizations trying to pick the right tools for their needs.
+
+### The challenge of choice
+
+The open-source community has developed numerous solutions covering the whole data chain
+(ingestion, storage, query & processing, analysis, platform management).
 
 <img src="platform.png" alt="Overview" style="width:800px;"/>
 
-While this diversity is a testament to the innovation in the field, it can make the decision-making process complex and time-consuming for organizations looking to build or enhance their data infrastructure.
+While this diversity is a testament to the field's innovation, it makes decision-making
+complex and time-consuming for teams building or evolving their data infrastructure.
 
-### Our Approach: Tailored Filters for Informed Decisions
-Recognizing this challenge, we have developed a set of filters to help businesses identify the most suitable open-source solutions for their unique requirements. These filters take into account various factors such as:
+### Our approach: tailored filters for informed decisions
+
+To help with the choice, we propose a set of filters that take into account factors such as:
+
 1. Company size and scale of data operations
-2. Specific industry requirements and regulations
+2. Industry-specific requirements and regulations
 3. Existing technology stack and integration needs
-4. Performance requirements and scalability needs
+4. Performance and scalability needs
 5. Level of in-house expertise and resources
 6. Long-term maintainability and community support
 
-By applying these filters, companies can narrow down the vast array of options to a more manageable selection of tools that are likely to provide the most value for their specific use cases.
+By applying these filters, the vast catalogue is narrowed down to a manageable selection
+of high-value tools for each use case.
 
-### Benefits of Our Filtering Approach
+### Benefits
 
-- Time-saving: Reduces the time spent on researching and evaluating unsuitable options
-- Tailored recommendations: Provides suggestions that align with the company's specific context and goals
-- Risk mitigation: Helps avoid selecting tools that may not scale or integrate well with existing systems
-- Informed decision-making: Offers a structured approach to comparing and selecting solutions
-
-Our goal is to simplify the process of navigating the rich landscape of open-source data solutions, enabling businesses to make informed decisions and leverage the power of open-source technologies effectively in their data strategies.
+- **Time-saving**: less time spent researching and evaluating unsuitable options.
+- **Tailored recommendations**: aligned with the context and goals.
+- **Risk mitigation**: avoid tools that scale or integrate poorly.
+- **Informed decisions**: a structured approach to comparison and selection.
 
 ## A working prototype
-An application to understand statistique of [Steam](https://store.steampowered.com)
 
-The application using [Kestra](https://kestra.io), [dbt](https://www.getdbt.com), [Evidence](https://evidence.dev) and [PostgreSQL](postgresql.org/)
+An application to explore [Steam](https://store.steampowered.com) statistics.
 
-To get the project: https://github.com/olexya/data-games-viz
+It uses [Kestra](https://kestra.io), [dbt](https://www.getdbt.com),
+[Evidence](https://evidence.dev) and [PostgreSQL](https://www.postgresql.org).
+
+Get the project: [github.com/olexya/data-games-viz](https://github.com/olexya/data-games-viz)
