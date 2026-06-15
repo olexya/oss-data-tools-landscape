@@ -4,22 +4,22 @@ on:
   push:
     branches: [main, master]
     paths:
-      - '01.ingestion_and_transport.md'
-      - '02.storage.md'
-      - '03.query_and_processing.md'
-      - '04.analysis_and_output.md'
-      - '05.platform_management.md'
+      - '**.md'
       - 'docs/**'
+      - 'img/**'
+      - '_config.yml'
+      - '_layouts/**'
+      - '_includes/**'
       - '.github/workflows/build-site.yml'
   workflow_dispatch:
 
-# Allow the workflow to publish to GitHub Pages.
+# Publish to GitHub Pages.
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Only one concurrent deployment; don't cancel an in-progress run.
+# Single concurrent deployment; don't cancel an in-progress run.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -36,16 +36,26 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Generate data.json / meta.json from catalogues
+      # Generate the interactive report data (docs/data.js + data.json + meta.json)
+      # BEFORE the Jekyll build so they are included in the published site.
+      - name: Generate report data
         run: node docs/build-data.mjs "$(date +%d/%m/%Y)"
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      # Build the WHOLE site with Jekyll (README -> home with the custom layout,
+      # catalogues 0X.md -> .html, derived analyses, and docs/ copied as static).
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: ./_site
 
   deploy:
     needs: build
