@@ -1,0 +1,25 @@
+title: OSS Data Tools Landscape
+description: Open-source building blocks for a composable data platform.
+baseurl: "/oss-data-tools-landscape"
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Apply the custom layout to every rendered Markdown page (no per-file front matter
+# needed). Raw HTML files without front matter (e.g. docs/index.html, the interactive
+# report) stay untouched.
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+exclude:
+  - node_modules
+  - img/node_modules
+  - commercial/img/node_modules
+  - Gemfile
+  - Gemfile.lock
+  - vendor

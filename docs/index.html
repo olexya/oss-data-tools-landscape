@@ -190,7 +190,7 @@
 <body>
 <header class="site">
  <div class="wrap">
- <h1>OSS Data Tools Landscape</h1>
+ <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><img src="../img/logo.png" alt="olexya" style="height:34px;width:auto"><h1 style="margin:0">OSS Data Tools Landscape</h1></div>
  <p class="lede">Browse, filter and sort the open-source data tooling catalogue &mdash; ingestion, storage,
  query &amp; processing, analysis, and platform management. Data is generated from the Markdown catalogues
  in the repository.</p>
@@ -263,8 +263,8 @@
  <span class="lg" style="opacity:.6">Faded = stale (old last commit)</span>
  </div>
  <div class="viewtoggle">
- <button class="btn" id="viewCards" aria-pressed="true">Cards</button>
- <button class="btn" id="viewTable" aria-pressed="false">Table</button>
+ <button class="btn" id="viewCards" aria-pressed="false">Cards</button>
+ <button class="btn" id="viewTable" aria-pressed="true">Table</button>
  <button class="btn" id="reset" title="Reset all filters">Reset</button>
  </div>
  </div>
@@ -308,7 +308,7 @@ let DATA = [];
 const state = {
  q: '', cat: '', sec: '', lic: '', meets: '',
  sortKey: 'stars', sortDir: -1, // -1 = desc, 1 = asc
- view: 'cards',
+ view: 'table',
 };
 
 /* thresholds computed from data */
