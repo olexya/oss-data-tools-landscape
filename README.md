@@ -9,16 +9,25 @@ an inventory by function, a classification by data flow, licenses, and an intera
 
 ## Navigation
 
-- **Catalogues**: [Ingestion & Transport](01.ingestion_and_transport.md) ·
-  [Storage](02.storage.md) · [Query & Processing](03.query_and_processing.md) ·
-  [Analysis & Output](04.analysis_and_output.md) ·
-  [Platform Management](05.platform_management.md)
-- **Analyses**: [Classification by data flow](06.classification_par_flux.md) ·
-  [Flow × Function matrix](07.matrice_flux_fonction.md) ·
-  [Visualisations](08.visualisations_classification.md)
-- **[Licenses](09.licenses.md)** (families, limits and possibilities) ·
-  **[Interactive report](docs/)**
-- **Profile guides**: [`company/`](company/) — tool selection by company size.
+**Catalogues** — open-source tools inventoried by function:
+
+- [Ingestion & Transport](01.ingestion_and_transport.md) — replication, event/stream, log collection, change data capture (CDC)
+- [Storage](02.storage.md) — file formats, object storage, table/metadata layers, vector stores
+- [Query & Processing](03.query_and_processing.md) — query engines, stream & batch, dataframes, OLAP, time-series
+- [Analysis & Output](04.analysis_and_output.md) — viz frameworks, BI, dashboards, web analytics
+- [Platform Management](05.platform_management.md) — orchestration, data quality, governance, automation, green IT
+
+**Cross-cutting analyses** — the same tools, seen differently:
+
+- [Classification by data flow](06.classification_par_flux.md) — streaming / micro-batching / batching
+- [Flow × Function matrix](07.matrice_flux_fonction.md) — each tool mapped to its function and flow
+- [Visualisations](08.visualisations_classification.md) — diagrams (heatmaps, pipelines, decision trees)
+
+**Resources**:
+
+- [Interactive report](docs/) — search, filter and sort every tool (table view, top/flop, recent/stale)
+- [Licenses](09.licenses.md) — license families, limits and possibilities
+- [Profile guides](company/) — recommended stacks by company size
 
 ## Project goals
 
