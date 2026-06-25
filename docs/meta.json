@@ -1,16 +1,16 @@
 {
-  "generatedAt": "13/06/2026",
-  "generatedAtISO": "2026-06-13",
-  "total": 261,
+  "generatedAt": "25/06/2026",
+  "generatedAtISO": "2026-06-25",
+  "total": 263,
   "categories": {
-    "Ingestion & Transport": 40,
+    "Ingestion & Transport": 41,
     "Storage": 35,
-    "Query & Processing": 62,
+    "Query & Processing": 63,
     "Analysis & Output": 70,
     "Platform Management": 54
   },
   "sections": {
-    "Ingestion & Transport / Data Replication": 11,
+    "Ingestion & Transport / Data Replication": 12,
     "Ingestion & Transport / Event/Stream Processing": 12,
     "Ingestion & Transport / Log Collection and Processing": 10,
     "Ingestion & Transport / Change Data Capture": 7,
@@ -19,7 +19,7 @@
     "Storage / Metadata Layer": 12,
     "Storage / Vector Storage": 5,
     "Storage / Data Modeling": 4,
-    "Query & Processing / Query Engine": 10,
+    "Query & Processing / Query Engine": 11,
     "Query & Processing / Stream Processing": 16,
     "Query & Processing / Batch Processing": 11,
     "Query & Processing / Dataframe Processing": 9,
@@ -39,20 +39,20 @@
   },
   "licenseFamilies": {
     "Source-available": 11,
-    "Permissive": 218,
+    "Permissive": 220,
     "Unknown": 7,
     "Copyleft": 25
   },
   "licenses": {
     "Elastic-2.0": 5,
-    "Apache-2.0": 152,
+    "Apache-2.0": 154,
     "MIT": 44,
     "MPL-2.0": 3,
     "EPL-2.0": 1,
     "BSL-1.1": 4,
     "AGPL-3.0": 16,
     "SSPL-1.0": 1,
-    "GPL-3.0": 6,
+    "LGPL-3.0": 1,
     "GPL-2.0": 2,
     "LGPL-2.1": 1,
     "PostgreSQL": 2,
@@ -60,6 +60,7 @@
     "N/A": 3,
     "ISC": 3,
     "Matplotlib": 1,
+    "GPL-3.0": 5,
     "BSD-2-Clause": 1,
     "FSL-1.1": 1,
     "EUPL-1.2": 1,
@@ -68,7 +69,7 @@
   },
   "meetsCriteria": {
     "yes": 236,
-    "no": 25,
+    "no": 27,
     "unknown": 0
   },
   "sourceFiles": [
